@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Project Loaders | NUnit Docs </title>
+    <title>Installing Engine Extensions | NUnit Docs </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Project Loaders | NUnit Docs ">
+    <meta name="title" content="Installing Engine Extensions | NUnit Docs ">
     <meta name="generator" content="docfx 2.56.1.0">
     
     <link rel="shortcut icon" href="../../../favicon.ico">
@@ -76,93 +76,27 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="ProjectLoaders">
-<h1 id="project-loaders">Project Loaders</h1>
+            <article class="content wrap" id="_content" data-uid="installingextensions">
+<h1 id="installing-engine-extensions">Installing Engine Extensions</h1>
 
-<p><strong>Project Loaders</strong> are extensions that know how to load a project in a particular format and create a package suitable for running tests under NUnit. NUnit itself provides two of them:</p>
-<ul>
-<li>NUnitProjectLoader</li>
-<li>VisualStudioProjectLoader</li>
-</ul>
-<p>The extension point for project loaders accepts extensions that implement the <code>NUnit.Engine.Extensibility.IProjectLoader</code> interface. The definition of a project loader extension might look something like the following...</p>
-<pre><code class="lang-csharp">[Extension]
-[ExtensionProperty(&quot;FileExtension&quot;, &quot;.xxx&quot;)]
-[ExtensionProperty(&quot;FileExtension&quot;, &quot;.yyy&quot;)]
-public class SomeProjectLoader : IProjectLoader
-{
-    /* ... */
-}
+<p>Extensions are located by the engine by use of an <code>.addins</code> file.</p>
+<p>For certain package managers, default <code>.addins</code> have been created such that when both engine and extensions are installed from the same package manager, all extensions are installed automatically. Currently, this includes NuGet and Chocolatey.</p>
+<p>In other cases, the user may need to create a new <code>.addins</code> file, or edit an existing one. Ths behavior of the <code>.addins</code> file is covered below.</p>
+<h2 id="the-addins-file">The .addins file</h2>
+<p><code>.addins</code> files are used to locate engine extensions. Either a single <code>.addins</code> file can be used to list all extensions and directories to be searched, or multiple files. <code>.addins</code> files can also be chained together -- allowing multiple levels of redirection.</p>
+<p>Each line of the <code>.addins</code> file contains the path of an extension assembly or a directory containing assemblies. Wildcards may be used for assembly entries and relative paths are interpreted based on the location of the <code>.addins</code> file.</p>
+<p>The following is an example of a possible <code>.addins</code> file, with comments indicating what each line does:</p>
+<pre><code class="lang-none"># This line is a comment and is ignored. The next (blank) line is ignored as well.
+
+*.dll                   # include all dlls in the same directory
+addins/*.dll            # include all dlls in the addins directory too
+special/myassembly.dll  # include a specific dll in a special directory
+/some/other/directory/  # process another directory, which may contain its own addins file
+                        # note that an absolute path is allowed, but is probably not a good idea
+                        # in most cases
 </code></pre>
-<p>The engine will only load the extension if it encounters a potential project file using the indicated file extensions.</p>
-<p>The <code>IProjectLoader</code> interface is defined as follows:</p>
-<pre><code class="lang-csharp">/// &lt;summary&gt;
-/// The IProjectLoader interface is implemented by any class
-/// that knows how to load projects in a specific format.
-/// &lt;/summary&gt;
-[TypeExtensionPoint(
-    Description = &quot;Recognizes and loads assemblies from various types of project formats.&quot;)]
-public interface IProjectLoader
-{
-    /// &lt;summary&gt;
-    /// Returns true if the file indicated is one that this
-    /// loader knows how to load.
-    /// &lt;/summary&gt;
-    /// &lt;param name=&quot;path&quot;&gt;The path of the project file&lt;/param&gt;
-    /// &lt;returns&gt;True if the loader knows how to load this file, otherwise false&lt;/returns&gt;
-    bool CanLoadFrom(string path);
-
-    /// &lt;summary&gt;
-    /// Loads a project of a known format.
-    /// &lt;/summary&gt;
-    /// &lt;param name=&quot;path&quot;&gt;The path of the project file&lt;/param&gt;
-    /// &lt;returns&gt;An IProject interface to the loaded project or null if the project cannot be loaded&lt;/returns&gt;
-    IProject LoadFrom(string path);
-}
-</code></pre>
-<p>An <code>IProject</code>, which is returned by <code>LoadFrom</code> is defined as:</p>
-<pre><code class="lang-csharp">/// &lt;summary&gt;
-/// Interface for the various project types that the engine can load.
-/// &lt;/summary&gt;
-public interface IProject
-{
-    /// &lt;summary&gt;
-    /// Gets the path to the file storing this project, if any.
-    /// If the project has not been saved, this is null.
-    /// &lt;/summary&gt;
-    string ProjectPath { get; }
-
-    /// &lt;summary&gt;
-    /// Gets the active configuration, as defined
-    /// by the particular project.
-    /// &lt;/summary&gt;
-    string ActiveConfigName { get; }
-
-    /// &lt;summary&gt;
-    /// Gets a list of the configs for this project
-    /// &lt;/summary&gt;
-    IList&lt;string&gt; ConfigNames { get; }
-
-    /// &lt;summary&gt;
-    /// Gets a test package for the primary or active
-    /// configuration within the project. The package
-    /// includes all the assemblies and any settings
-    /// specified in the project format.
-    /// &lt;/summary&gt;
-    /// &lt;returns&gt;A TestPackage&lt;/returns&gt;
-    TestPackage GetTestPackage();
-
-    /// &lt;summary&gt;
-    /// Gets a TestPackage for a specific configuration
-    /// within the project. The package includes all the
-    /// assemblies and any settings specified in the
-    /// project format.
-    /// &lt;/summary&gt;
-    /// &lt;param name=&quot;configName&quot;&gt;The name of the config to use&lt;/param&gt;
-    /// &lt;returns&gt;A TestPackage for the named configuration.&lt;/returns&gt;
-    TestPackage GetTestPackage(string configName);
-}
-</code></pre>
-<p><code>TestPackage</code> is defined in the <code>nunit.engine.api</code> assembly and includes a list of assemblies together with a dictionary of settings used by the package.</p>
+<p>Any assemblies specified in a <code>.addins</code> file will be scanned fully, looking for addins and extensions. Any directories specified will be browsed, first looking for any <code>.addins</code> files. If one or more files are found, the content of the files will direct all further browsing. If no such file is found, then all <code>.dll</code> files in the directory will be scanned, just as if a <code>.addins</code> file contained &quot;*.dll.&quot;</p>
+<p>Note that if a specific assembly is listed in the <code>.addins</code> file which is found not to be a valid extension, an exception will be thrown by the engine. This exception is suppressed in the cases of wildcard paths, where it is considered valid to find no extensions under the path.</p>
 </article>
           </div>
           
@@ -171,7 +105,7 @@ public interface IProject
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/MichaelCorleoneLi/docs/blob/master/docs/articles/nunit/extending-nunit/Project-Loaders.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/MichaelCorleoneLi/docs/blob/master/docs/articles/nunit-engine/extensions/Installing-Extensions.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

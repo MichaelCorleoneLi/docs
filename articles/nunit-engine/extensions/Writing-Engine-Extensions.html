@@ -76,25 +76,31 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="WritingEngineExtensions">
+            <article class="content wrap" id="_content" data-uid="writingengineextensions">
 <h1 id="writing-engine-extensions">Writing Engine Extensions</h1>
 
-<p>The NUnit Test Engine uses a plugin architecture that allows users and third parties to add new functionality to the engine. The extensibility model defines a number of Extension Points to which Extensions may be added. This page gives general information that applies to all types of extensions you may want to write. The individual pages for each type of extension give specific details. For a detailed description of the engine extensibility architecture, see <a class="xref" href="Engine-Extensibility.html">Engine Extensibility</a>.</p>
-<h2 id="extension-attribute">Extension Attribute</h2>
+<p>This page gives general information that applies to all types of extensions you may want to write. The individual pages for each type of extension give specific details.</p>
+<h2 id="extension-structure">Extension structure</h2>
 <p>Every extension is implemented by a class with specific characteristics:</p>
 <ul>
 <li>Has a default constructor so that NUnit can create an instance.</li>
 <li>Implements some interface that varies according to the particular extension.</li>
 <li>Is marked with the <code>ExtensionAttribute</code> so that NUnit can recognize it as an extension.</li>
 </ul>
-<p>The code for a typical extension might look like this.</p>
+<p>As an example, the code for an <code>IProjectLoader</code> extension might look like this:</p>
 <pre><code class="lang-csharp">[Extension]
-public class MyExtension : ISomeInterface // Depending on the extension point
+public class MyExtension : IProjectLoader
 {
-    // Your code here
+    public MyExtenions()
+    {
+        /* ... */
+    }
+
+    /* ... */
 }
 </code></pre>
-<p>The attribute has four named properties, all optional:</p>
+<h2 id="extension-attribute">Extension Attribute</h2>
+<p>The <code>ExtensionAttribute</code> has four named properties, all optional:</p>
 <ul>
 <li><p><strong>Path</strong> This is a string that uniquely identifies the extension point to which the extension applies. It is only rarely needed, since NUnit can usually deduce the type of extension based on what interface is implemented by the extension class.</p>
 </li>
@@ -103,15 +109,15 @@ public class MyExtension : ISomeInterface // Depending on the extension point
 <li><p><strong>Enabled</strong> A boolean flag indicating whether the extension is enabled. This defaults to true. The setting is used by advanced extensions with functionality that is turned on and off depending on user input.</p>
 </li>
 <li><p><strong>EngineVersion</strong> The minimum engine version supported by the extension. Although optional, you should use this property if your extension will not work with all versions of the engine. If you don't use it and your extension requires engine services that are not present, then it might throw an exception or cause other errors.</p>
-</li>
-</ul>
 <div class="NOTE">
 <h5>Note</h5>
-<p>Only engine versions 3.4 or later check this property. The only way to avoid errors in the case of lower engine versions is to not install such extensions.</p>
+<p>Only engine versions 3.4 or later check the <code>EngineVersion</code> property. The only way to avoid errors in the case of lower engine versions is to not install such extensions.</p>
 </div>
+</li>
+</ul>
 <h2 id="extensionpropertyattribute">ExtensionPropertyAttribute</h2>
-<p>Using only the <code>ExtensionAttribute</code>, NUnit would have to create instances of every extension in order to ask questions like &quot;What file extensions do you support.&quot; This would mean loading many potentially unneeded assemblies.</p>
-<p>The <code>ExtensionPropertyAttribute</code> avoids the problem. NUnit's own extension for loading NUnit projects is a good example:</p>
+<p>The <code>ExtensionPropertyAttribute</code> is used to provide additional meta-data to the engine, without the need for the engine to load each extension. The usages of <code>ExtensionPropertyAttribute</code> differ per type of extension.</p>
+<p>Below is an example of how the attribute would be used for an <code>IProjectLoader</code> extension:</p>
 <pre><code class="lang-csharp">[Extension]
 [ExtensionProperty(&quot;FileExtension&quot;, &quot;.nunit&quot;)]
 public class NUnitProjectLoader : IProjectLoader
@@ -124,20 +130,6 @@ public class NUnitProjectLoader : IProjectLoader
 <h5>Note</h5>
 <p>Extensions are usually created each in their own assembly for efficiency. It's possible to have several related extensions in the same assembly, but they will all be loaded into memory as soon as one is used.</p>
 </div>
-<h2 id="kinds-of-extensions">Kinds of Extensions</h2>
-<p>As of version 3.4, the NUnit Engine supports four types of extensions. The individual pages for each type give specific details on implementing each of them.</p>
-<ul>
-<li><a href="Project-Loaders.html">Project Loaders</a></li>
-<li><a href="Result-Writers.html">Result Writers</a></li>
-<li><a href="Framework-Drivers.html">Framework Drivers</a></li>
-<li><a href="Event-Listeners.html">Event Listeners</a></li>
-</ul>
-<h2 id="installing-extensions">Installing Extensions</h2>
-<p>Once an extension is written and compiled, it has to be placed somewhere such that NUnit will find it.</p>
-<div class="NOTE">
-<h5>Note</h5>
-<p>This section is under construction. For now see the <a class="xref" href="Engine-Extensibility.html">Engine Extensibility page</a></p>
-</div>
 </article>
           </div>
           
@@ -146,7 +138,7 @@ public class NUnitProjectLoader : IProjectLoader
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/MichaelCorleoneLi/docs/blob/master/docs/articles/nunit/extending-nunit/Writing-Engine-Extensions.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/MichaelCorleoneLi/docs/blob/master/docs/articles/nunit-engine/extensions/Writing-Engine-Extensions.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
