@@ -13,9 +13,9 @@
     </script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>TestCase | NUnit Docs </title>
+    <title>FixtureLifeCycle | NUnit Docs </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="TestCase | NUnit Docs ">
+    <meta name="title" content="FixtureLifeCycle | NUnit Docs ">
     <meta name="generator" content="docfx 2.56.1.0">
     
     <link rel="shortcut icon" href="../../../../favicon.ico">
@@ -84,62 +84,50 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="testcaseattribute">
-<h1 id="testcase">TestCase</h1>
+            <article class="content wrap" id="_content" data-uid="fixturelifecycleattribute">
+<h1 id="fixturelifecycle">FixtureLifeCycle</h1>
 
-<p><code>TestCaseAttribute</code> serves the dual purpose of marking a method with
-parameters as a test method and providing inline data to be used when
-invoking that method. Here is an example of a test being run three
-times, with three different sets of data:</p>
-<pre><code class="lang-csharp">[TestCase(12, 3, 4)]
-[TestCase(12, 2, 6)]
-[TestCase(12, 4, 3)]
-public void DivideTest(int n, int d, int q)
-{
-    Assert.AreEqual(q, n / d);
-}
-</code></pre>
-<div class="NOTE">
-<h5>Note</h5>
-<p>Because arguments to .NET attributes are limited in terms of the Types that may be used, NUnit will make some attempt to convert the supplied values using <code>Convert.ChangeType()</code> before supplying it to the test.</p>
-</div>
-<p><strong>TestCaseAttribute</strong> may appear one or more times on a test method,
-which may also carry other attributes providing test data.
-The method may optionally be marked with the <a href="test.html">Test Attribute</a> as well.</p>
-<p>By using the named parameter <code>ExpectedResult</code> this test set may be simplified
-further:</p>
-<pre><code class="lang-csharp">[TestCase(12, 3, ExpectedResult=4)]
-[TestCase(12, 2, ExpectedResult=6)]
-[TestCase(12, 4, ExpectedResult=3)]
-public int DivideTest(int n, int d)
-{
-    return n / d;
-}
-</code></pre>
-<p>In the above example, NUnit checks that the return
-value of the method is equal to the expected result provided on the attribute.</p>
-<p>TestCaseAttribute supports a number of additional named parameters:</p>
+<p>Added in <strong>NUnit 3.13</strong></p>
+<p>The <code>FixtureLifeCycleAttribute</code> is used to indicate that an instance for a test fixture or all test fixtures in an assembly should be constructed for each test within the fixture or assembly.</p>
+<p>This attribute may be applied to a test fixture (class) or to a test assembly. It is useful in combination with the <a href="parallelizable.html">Parallelizable Attribute</a> so that a new instance of a test fixture is constructed for every test within the test fixture. This allows tests to run in isolation without sharing instance fields and properties during parallel test runs. This make running parallel tests easier because it is easier to make your tests thread safe.</p>
+<p>This attribute can be applied to classes or to the entire test assembly. If applied to an assembly, it may be overridden at the class level.</p>
+<h2 id="lifecycle-enumeration">LifeCycle Enumeration</h2>
+<p>The constructor of <code>FixtureLifeCycleAttribute</code> takes a <code>LifeCycle</code> attribute to indicate if a single instance of a test fixture should be created for all tests or if a new instance should be created for each test.</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LifeCycle.SingleInstance</code></td>
+<td>A single instance is created and shared for all test cases</td>
+</tr>
+<tr>
+<td><code>LifeCycle.InstancePerTestCase</code></td>
+<td>A new instance is created for each test case</td>
+</tr>
+</tbody>
+</table>
+<h2 id="notes">Notes</h2>
 <ul>
-<li><strong>Author</strong> sets the author of the test.</li>
-<li><strong>Category</strong> provides a comma-delimited list of categories for this test.</li>
-<li><strong>Description</strong> sets the description property of the test.</li>
-<li><strong>ExcludePlatform</strong> specifies a comma-delimited list of platforms on which the test should not run.</li>
-<li><strong>ExpectedResult</strong> sets the expected result to be returned from the method, which must have a compatible return type.</li>
-<li><strong>Explicit</strong> is set to true in order to make the individual test case Explicit. Use <strong>Reason</strong> to explain why.</li>
-<li><strong>Ignore</strong> causes the test case to be ignored and specifies the reason.</li>
-<li><strong>IgnoreReason</strong> causes this test case to be ignored and specifies the reason.</li>
-<li><strong>IncludePlatform</strong> specifies a comma-delimited list of platforms on which the test should run.</li>
-<li><strong>Reason</strong> specifies the reason for not running this test case. Use in conjunction with <strong>Explicit</strong>.</li>
-<li><strong>TestName</strong> provides a name for the test. If not specified, a name is generated based on the method name and the arguments provided. See <a class="xref" href="../../running-tests/Template-Based-Test-Naming.html">Template Based Test Naming</a>.</li>
-<li><strong>TestOf</strong> specifies the Type that this test is testing</li>
+<li><p>When using <code>LifeCycle.InstancePerTestCase</code>, the <a class="xref" href="onetimesetup.html"><code>OneTimeSetUp</code></a> and <a class="xref" href="onetimeteardown.html"><code>OneTimeTearDown</code></a> methods must be static, and each are only called once. This is required so that the setup or teardown methods do not access instance fields or properties that are reset for every test.</p>
+</li>
+<li><p>When using <code>LifeCycle.InstancePerTestCase</code>, a class's constructor will be called before every test is executed and <code>IDisposable</code> test fixtures will be disposed after the test is finished.</p>
+</li>
+<li><p><a class="xref" href="setup.html"><code>SetUp</code></a> and <a class="xref" href="teardown.html"><code>TearDown</code></a> methods are called before and after every test.</p>
+</li>
+<li><p>The <code>Order</code> attribute is respected.</p>
+</li>
 </ul>
-<h2 id="order-of-execution">Order of Execution</h2>
-<p>Individual test cases are executed in the order in which NUnit discovers them.
-This order does <strong>not</strong> necessarily follow the lexical order of the attributes
-and will often vary between different compilers or different versions of the CLR.</p>
-<p>As a result, when <strong>TestCaseAttribute</strong> appears multiple times on a method
-or when other data-providing attributes are used in combination with
-<strong>TestCaseAttribute</strong>, the order of the test cases is undefined.</p>
+<h2 id="see-also">See Also</h2>
+<ul>
+<li><a class="xref" href="parallelizable.html">Parallelizable Attribute</a></li>
+<li><a class="xref" href="onetimesetup.html">OneTimeSetUp Attribute</a></li>
+<li><a class="xref" href="onetimeteardown.html">OneTimeTearDown Attribute</a></li>
+</ul>
 </article>
           </div>
           
@@ -148,7 +136,7 @@ or when other data-providing attributes are used in combination with
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/MichaelCorleoneLi/docs/blob/master/docs/articles/nunit/writing-tests/attributes/testcase.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/MichaelCorleoneLi/docs/blob/master/docs/articles/nunit/writing-tests/attributes/fixturelifecycle.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
