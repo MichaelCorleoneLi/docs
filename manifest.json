@@ -44,7 +44,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/developer-info/Coding-Standards.html",
-          "hash": "5+DAs1ofTt53P398DvmjOw=="
+          "hash": "oXu19v/TM/uJIq6eVGXYWw=="
         }
       },
       "is_incremental": false,
@@ -69,18 +69,6 @@
         ".html": {
           "relative_path": "articles/developer-info/Issue-Tracking.html",
           "hash": "KkjYH0tzS7Yzer159ZatZg=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
-      "type": "Conceptual",
-      "source_relative_path": "articles/developer-info/NUnit-Copyright-Notice.md",
-      "output": {
-        ".html": {
-          "relative_path": "articles/developer-info/NUnit-Copyright-Notice.html",
-          "hash": "SJwn+LNriDEXIAwM/xasUQ=="
         }
       },
       "is_incremental": false,
@@ -128,7 +116,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/developer-info/Packaging-the-Framework.html",
-          "hash": "PQtwYsOQxNOuN/a6rpvmyQ=="
+          "hash": "vGwXn6QTBbJREzn9fgLe9w=="
         }
       },
       "is_incremental": false,
@@ -1388,7 +1376,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/nunit/license.html",
-          "hash": "fvFdNspYzbO/COdntAbOxg=="
+          "hash": "CGYoAMzduYcr6UlB02rVYg=="
         }
       },
       "is_incremental": false,
@@ -3824,7 +3812,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/toc.html",
-          "hash": "R4GlOVJeyWpxFsHXTuCBkA=="
+          "hash": "3lEZyCN5TTDgkLPmry8J+A=="
         }
       },
       "is_incremental": false,
@@ -34083,7 +34071,7 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": false,
           "incrementalPhase": "build",
-          "total_file_count": 336,
+          "total_file_count": 335,
           "skipped_file_count": 0
         },
         "ResourceDocumentProcessor": {
