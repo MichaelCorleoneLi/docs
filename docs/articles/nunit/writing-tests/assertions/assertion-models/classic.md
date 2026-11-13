@@ -12,50 +12,63 @@ Here's a simple assert using the classic model:
 StringAssert.AreEqualIgnoringCase("Hello", myString);
 ```
 
-The Assert class provides the most common assertions in NUnit:
+> [!NOTE]
+> From version 4.5.0, using C# 14, you don't need to use the ClassicAssert class, nor the NUnit.Framework.Legacy
+> namespace, but can use the former Assert class. This applies for many of the asserts, but a few still require the use of
+> the ClassicAssert class. These will be fixed in upcoming releases. In the list below, and in the examples, the 4.5.0
+> syntax will be used. If you use an earlier 4.x version, replace Assert with ClassicAssert and include the
+> NUnit.Framework.Legacy namespace.
+>
+> The `ClassicAssert` and `NUnit.Framework.Legacy` are still available in 4.5.0, so you don't need to change code
+> that already use this.
+>
+> See [classic extensions](classic_extensions.md) for a full table over all extension mappings.
 
-* [Assert.True](../classic-assertions/Assert.True.md)
-* [Assert.False](../classic-assertions/Assert.False.md)
-* [Assert.Null](../classic-assertions/Assert.Null.md)
-* [Assert.NotNull](../classic-assertions/Assert.NotNull.md)
-* [Assert.Zero](../classic-assertions/Assert.Zero.md)
-* [Assert.NotZero](../classic-assertions/Assert.NotZero.md)
-* [Assert.IsNaN](../classic-assertions/Assert.IsNaN.md)
-* [Assert.IsEmpty](../classic-assertions/Assert.IsEmpty.md)
-* [Assert.IsNotEmpty](../classic-assertions/Assert.IsNotEmpty.md)
-* [Assert.AreEqual](../classic-assertions/Assert.AreEqual.md)
-* [Assert.AreNotEqual](../classic-assertions/Assert.AreNotEqual.md)
-* [Assert.AreSame](../classic-assertions/Assert.AreSame.md)
-* [Assert.AreNotSame](../classic-assertions/Assert.AreNotSame.md)
-* [Assert.Contains](../classic-assertions/Assert.Contains.md)
-* [Assert.Greater](../classic-assertions/Assert.Greater.md)
-* [Assert.GreaterOrEqual](../classic-assertions/Assert.GreaterOrEqual.md)
-* [Assert.Less](../classic-assertions/Assert.Less.md)
-* [Assert.LessOrEqual](../classic-assertions/Assert.LessOrEqual.md)
-* [Assert.Positive](../classic-assertions/Assert.Positive.md)
-* [Assert.Negative](../classic-assertions/Assert.Negative.md)
-* [Assert.IsInstanceOf](../classic-assertions/Assert.IsInstanceOf.md)
-* [Assert.IsNotInstanceOf](../classic-assertions/Assert.IsNotInstanceOf.md)
-* [Assert.IsAssignableFrom](../classic-assertions/Assert.IsAssignableFrom.md)
-* [Assert.IsNotAssignableFrom](../classic-assertions/Assert.IsNotAssignableFrom.md)
-* [Assert.Throws](../classic-assertions/Assert.Throws.md)
-* [Assert.ThrowsAsync](../classic-assertions/Assert.ThrowsAsync.md)
-* [Assert.DoesNotThrow](../classic-assertions/Assert.DoesNotThrow.md)
-* [Assert.DoesNotThrowAsync](../classic-assertions/Assert.DoesNotThrowAsync.md)
-* [Assert.Catch](../classic-assertions/Assert.Catch.md)
-* [Assert.CatchAsync](../classic-assertions/Assert.CatchAsync.md)
-* [Assert.Pass](../classic-assertions/Assert.Pass.md)
-* [Assert.Fail](../classic-assertions/Assert.Fail.md)
-* [Assert.Ignore](../classic-assertions/Assert.Ignore.md)
-* [Assert.Inconclusive](../classic-assertions/Assert.Inconclusive.md)
+The Assert class provides the most common classic assertions in NUnit:
 
-Additional assertions are provided by the following classes:
+* [Assert.True](xref:classic-assert-true)
+* [Assert.False](xref:classic-assert-false)
+* [Assert.Null](xref:classic-assert-null)
+* [Assert.NotNull](xref:classic-assert-not-null)
+* [Assert.Zero](xref:classic-assert-zero)
+* [Assert.NotZero](xref:classic-assert-not-zero)
+* [Assert.IsNaN](xref:classic-assert-is-nan)
+* [Assert.IsEmpty](xref:classic-assert-is-empty)
+* [Assert.IsNotEmpty](xref:classic-assert-is-not-empty)
+* [Assert.AreEqual](xref:classic-assert-are-equal)
+* [Assert.AreNotEqual](xref:classic-assert-are-not-equal)
+* [Assert.AreSame](xref:classic-assert-are-same)
+* [Assert.AreNotSame](xref:classic-assert-are-not-same)
+* [Assert.Contains](xref:classic-assert-contains)
+* [Assert.Greater](xref:classic-assert-greater)
+* [Assert.GreaterOrEqual](xref:classic-assert-greater-or-equal)
+* [Assert.Less](xref:classic-assert-less)
+* [Assert.LessOrEqual](xref:classic-assert-less-or-equal)
+* [Assert.Positive](xref:classic-assert-positive)
+* [Assert.Negative](xref:classic-assert-negative)
+* [Assert.IsInstanceOf](xref:classic-assert-is-instance-of)
+* [Assert.IsNotInstanceOf](xref:classic-assert-is-not-instance-of)
+* [Assert.IsAssignableFrom](xref:classic-assert-is-assignable-from)
+* [Assert.IsNotAssignableFrom](xref:classic-assert-is-not-assignable-from)
+* [Assert.Throws](xref:classic-assert-throws)
+* [Assert.ThrowsAsync](xref:classic-assert-throws-async)
+* [Assert.DoesNotThrow](xref:classic-assert-does-not-throw)
+* [Assert.DoesNotThrowAsync](xref:classic-assert-does-not-throw-async)
+* [Assert.Catch](xref:classic-assert-catch)
+* [Assert.CatchAsync](xref:classic-assert-catch-async)
 
-* [String Assert](../classic-assertions/String-Assert.md)
-* [Collection Assert](../classic-assertions/Collection-Assert.md)
-* [File Assert](../classic-assertions/File-Assert.md)
-* [Directory Assert](../classic-assertions/Directory-Assert.md)
+Additional assertions are provided by the following classes, which are in the `NUnit.Framework` namespace (From
+version 5). In NUnit 4, they are in the `NUnit.Framework.Legacy` namespace:
+
+* [String Assert](xref:classic-string-assert)
+* [Collection Assert](xref:classic-collection-assert)
+* [File Assert](xref:classic-file-assert)
+* [Directory Assert](xref:classic-directory-assert)
 
 ## See Also
 
 * [Constraint Model](xref:constraintmodel)
+
+## Notes
+
+* The exception-family of classic asserts have not been moved to the legacy namespace.

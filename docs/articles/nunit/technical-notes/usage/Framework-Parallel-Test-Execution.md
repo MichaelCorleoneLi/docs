@@ -1,16 +1,33 @@
+---
+uid: frameworkparalleltestexecution
+---
+
 # Framework Parallel Test Execution
 
-The NUnit 3.0 framework can run tests in parallel within an assembly. This is a completely separate facility from [Engine Parallel Test Execution](Engine-Parallel-Test-Execution.md), although it is possible to use both in the same test run.
+The NUnit 3.0 framework can run tests in parallel within an assembly. This is a completely separate facility from
+[Engine Parallel Test Execution](Engine-Parallel-Test-Execution.md), although it is possible to use both in the same
+test run.
 
-By default, no parallel execution takes place. Attributes are used to indicate which tests may run in parallel and how they relate to other tests.
+By default, no parallel execution takes place. Attributes are used to indicate which tests may run in parallel and how
+they relate to other tests.
+
+> [!TIP]
+> This note describes how NUnit schedules parallel work. For practical questions, such as how to turn parallel execution
+> on and what to do about state shared between tests, see
+> [Running Tests in Parallel](../../writing-tests/parallel-tests.md).
 
 ## Platform Support
 
-Parallel execution is supported by the NUnit framework on desktop .NET runtimes and .NET Standard 2.0. It is not supported in the .NET Standard 1.6 build, although the attributes are recognized without error in order to allow use in projects that build against multiple targets.
+Parallel execution is supported by the NUnit framework on desktop .NET runtimes and .NET Standard 2.0. It is not
+supported in the .NET Standard 1.6 build, although the attributes are recognized without error in order to allow use in
+projects that build against multiple targets.
 
 ## ParallelizableAttribute
 
-This attribute is used to indicate whether the test and/or its descendants may be run in parallel with other tests. The constructor takes an optional `ParallelScope` enumeration argument (see below), which defaults to `ParallelScope.Self`. The attribute may be used at the assembly, class or method level and the word "test" in the rest of this description refers to the suite or test case that corresponds to the item on which the attribute appears.
+This attribute is used to indicate whether the test and/or its descendants may be run in parallel with other tests. The
+constructor takes an optional `ParallelScope` enumeration argument (see below), which defaults to `ParallelScope.Self`.
+The attribute may be used at the assembly, class or method level and the word "test" in the rest of this description
+refers to the suite or test case that corresponds to the item on which the attribute appears.
 
 One Named Property is supported:
 
@@ -18,58 +35,109 @@ One Named Property is supported:
 
 ## NonParallelizableAttribute
 
-This Attribute is used to indicate that the test as well as its descendants may __not__ be run in parallel with other tests. Although `[NonParallelizable]` is completely equivalent to `[Parallelizable(ParallelScope.None)]`, we recommend that you use the former for clarity.
+This Attribute is used to indicate that the test as well as its descendants may __not__ be run in parallel with other
+tests. Although `[NonParallelizable]` is completely equivalent to `[Parallelizable(ParallelScope.None)]`, we recommend
+that you use the former for clarity.
 
 ## ParallelScope Enumeration
 
-This is a `[Flags]` type enumeration used to specify which tests may run in parallel. It applies to the test upon which it appears and any subordinate tests. The following values are available for use:
+This is a `[Flags]` type enumeration used to specify which tests may run in parallel. It applies to the test upon which
+it appears and any subordinate tests. The following values are available for use:
 
-* `ParallelScope.Self` indicates that the test itself may be run in parallel with other tests. This is the default for the `ParallelizableAttribute` and is the only value permitted on a test method.
-* `ParallelScope.Children` indicates that the descendants of the test may be run in parallel with respect to one another.
-* `ParallelScope.Fixtures` indicates that test fixtures that are the descendants of the test may be run in parallel with one another.`
+* `ParallelScope.Self` indicates that the test itself may be run in parallel with other tests. This is the default for
+  the `ParallelizableAttribute` and is the only value permitted on a test method that is not parameterized.
+* `ParallelScope.Children` indicates that the descendants of the test may be run in parallel with respect to one
+  another. On a parameterized test method this is the only part of the scope that has an effect: the suite of test
+  cases always executes directly on the thread of its fixture, so `Self` is ignored there and `Children` and `All` are
+  equivalent. The individual cases are then dispatched to the parallel queue.
+* `ParallelScope.Fixtures` indicates that test fixtures that are the descendants of the test may be run in parallel with
+  one another.`
 
 > [!NOTE]
-> Additional values of the enumerator are used internally. They do not show up in the Intellisense and are not documented here. The value `ParallelScope.None`, which was used before the creation of the `NonParallelizableAttribute` is still accepted for the purpose of backward compatibility.
+> Additional values of the enumerator are used internally. They do not show up in the Intellisense and are not
+> documented here. The value `ParallelScope.None`, which was used before the creation of the
+> `NonParallelizableAttribute` is still accepted for the purpose of backward compatibility.
 
 ## Specifying Parallelism at Multiple Test Levels
 
-`[Parallelizable]` or `[NonParallelizable]` may be specified on multiple levels of the tests, with lower-level specifications overriding higher ones to a certain degree. Thus, if the assembly has `[NonParallelizable]` either by use of the attribute or by default, classes with `[Parallelizable]` may be run in parallel as may their children if an appropriate scope is used.
+`[Parallelizable]` or `[NonParallelizable]` may be specified on multiple levels of the tests, with lower-level
+specifications overriding higher ones to a certain degree. Thus, if the assembly has `[NonParallelizable]` either by use
+of the attribute or by default, classes with `[Parallelizable]` may be run in parallel as may their children if an
+appropriate scope is used.
 
-It is important to note that a parallel or non-parallel specification only applies at that level where it appears and below. It cannot override the settings on higher-level tests. In this way, parallelism is not absolute but is relative to other tests at the same level in the tree. The following are a few examples of how this works:
+It is important to note that a parallel or non-parallel specification only applies at that level where it appears and
+below. It cannot override the settings on higher-level tests. In this way, parallelism is not absolute but is relative
+to other tests at the same level in the tree. The following are a few examples of how this works:
 
-1. **Non-parallel class with parallel methods:** The methods only run in parallel with one another, not with the test methods of any other classes.
+1. __Non-parallel class with parallel methods:__ The methods only run in parallel with one another, not with the test
+   methods of any other classes.
 
-2. **Parallel class with non-parallel methods:** The methods run sequentially, usually on the same thread that ran the class one-time setup, but may actually be running in parallel with other, unrelated methods from other classes.
+2. __Parallel class with non-parallel methods:__ The methods run sequentially, usually on the same thread that ran the
+   class one-time setup, but may actually be running in parallel with other, unrelated methods from other classes.
 
-3. **Non-parallel SetUpFixture with parallel test fixtures:** The entire group of fixtures runs separately from any fixtures outside the group. Within the group, multiple fixtures run in parallel.
+3. __Non-parallel SetUpFixture with parallel test fixtures:__ The entire group of fixtures runs separately from any
+   fixtures outside the group. Within the group, multiple fixtures run in parallel.
 
-4. **Parallel SetUpFixture with non-parallel test fixtures:** The group runs in parallel with other fixtures and groups. Within the group, only one fixture at a time may execute.
+4. __Parallel SetUpFixture with non-parallel test fixtures:__ The SetUpFixture's own one-time setup and teardown may run
+   in parallel with other work, but the non-parallel fixtures inside it are queued together with every other
+   non-parallel fixture in the assembly and run one at a time, after all parallel work has finished. This does not
+   produce a group that runs in parallel with other groups while its own fixtures run in sequence; see (3) for the
+   way to isolate a group.
 
-5. **Parallel SetUpFixture with non-parallel test fixtures containing parallel test cases:** This is just one example of a more complex setup. The fixtures themselves run as described in (4) but the cases within each fixture run in parallel with one another.
+5. __Parallel SetUpFixture with non-parallel test fixtures containing parallel test cases:__ This is just one example of
+   a more complex setup. The fixtures themselves run as described in (4) but the cases within each fixture run in
+   parallel with one another.
 
 Once you understand the principles, you can construct complex hierarchies of parallel and non-parallel tests.
 
 ## LevelOfParallelismAttribute
 
-This is an **assembly-level** attribute, which may be used to specify the level of parallelism, that is, the maximum number of worker threads executing tests in this assembly. It may be overridden using a command-line option in the console runner. If it is not specified, NUnit uses a default value based on the number of processors available or a specified minimum, whichever is greater.
+This is an __assembly-level__ attribute, which may be used to specify the level of parallelism, that is, the maximum
+number of worker threads executing tests in this assembly. It may be overridden using a command-line option in the
+console runner. If it is not specified, NUnit uses a default value based on the number of processors available or a
+specified minimum, whichever is greater.
 
 ## Parallel Execution Internals
 
-We use multiple queues organized into "shifts". A `WorkShift` consists of one or more queues of work items, which may be active at the same time. As the name suggests, no two shifts are active simultaneously. NUnit runs one `WorkShift` until all available work is complete and then switches to the next shift. When there is no work for any shift, the run is complete.
+We use multiple queues organized into "shifts". A `WorkShift` consists of one or more queues of work items, which may be
+active at the same time. As the name suggests, no two shifts are active simultaneously. NUnit runs one `WorkShift` until
+all available work is complete and then switches to the next shift. When there is no work for any shift, the run is
+complete.
 
 There are three shifts, listed here with their associated queues...
 
-|     Shift              |    Queues              |  Workers  |  Usage    |
-|------------------------|------------------------|-----------|-----------|
-| Parallel Shift         | Parallel Queue         |    LoP*   | Parallelizable tests run in the MTA |
-|                        | Parallel STA Queue     |     1     | Parallelizable tests run in the STA |
-| Non-Parallel Shift     | Non-Parallel Queue     |     1     | Non-parallelizable tests run in the MTA |
-| Non-Parallel STA Shift | Non-Parallel STA Queue |     1     | Non-parallelizable tests run in the STA |
+| Shift                  | Queues                 | Workers | Usage                                   |
+| ---------------------- | ---------------------- | ------- | --------------------------------------- |
+| Parallel Shift         | Parallel Queue         | LoP*    | Parallelizable tests run in the MTA     |
+|                        | Parallel STA Queue     | 1       | Parallelizable tests run in the STA     |
+| Non-Parallel Shift     | Non-Parallel Queue     | 1       | Non-parallelizable tests run in the MTA |
+| Non-Parallel STA Shift | Non-Parallel STA Queue | 1       | Non-parallelizable tests run in the STA |
 
 (* Depends on Level of Parallelism)
 
-For efficiency, each queue is created when the first test is added to it. At the time of creation, all workers for that queue are also created and initialized.
+### Apartment State and Parallelism
 
-Whenever a non-parallel fixture begins execution, an entirely new set of queues is created so that the child tests of that fixture may be run without any conflict from other tests that are already in the main set of queues.
+A test's apartment state, set with the [`Apartment`](xref:attribute-apartment) attribute, decides which queue it goes
+to, and the number of workers on that queue decides how much parallelism it can get:
 
-If the command line specifies zero workers, all use of the dispatcher and its queues is bypassed and tests are run sequentially on a single thread.
+* __MTA tests__ (the default) go to the Parallel Queue, which has as many workers as the level of parallelism. These are
+  the only tests that can run in parallel with each other in any number.
+* __STA tests__ go to the Parallel STA Queue, which has a __single__ worker regardless of the level of parallelism. STA
+  tests therefore run one at a time among themselves, even when they are parallelizable and even when they belong to
+  different fixtures. They do run at the same time as the MTA workers, so an STA test and an MTA test can overlap.
+* __Non-parallelizable tests__ go to the Non-Parallel Queue or the Non-Parallel STA Queue, each with a single worker.
+  Those shifts run after the Parallel Shift has finished.
+
+The one-worker STA queue is the reason tests in different `[Apartment(ApartmentState.STA)]` fixtures report the same
+thread id when run with `ParallelScope.Fixtures` or `ParallelScope.Children`. Tests marked with
+[`RequiresThread`](xref:attribute-requiresthread) behave differently: each one is started on a brand-new thread with the
+requested apartment state, so parallelizable tests marked `[RequiresThread(ApartmentState.STA)]` can run concurrently.
+
+For efficiency, each queue is created when the first test is added to it. At the time of creation, all workers for that
+queue are also created and initialized.
+
+Whenever a non-parallel fixture begins execution, an entirely new set of queues is created so that the child tests of
+that fixture may be run without any conflict from other tests that are already in the main set of queues.
+
+If the command line specifies zero workers, all use of the dispatcher and its queues is bypassed and tests are run
+sequentially on a single thread.

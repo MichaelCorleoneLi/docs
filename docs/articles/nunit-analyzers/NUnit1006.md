@@ -2,13 +2,13 @@
 
 ## ExpectedResult must not be specified when the method returns void
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit1006
-| Severity | Error
-| Enabled  | True
-| Category | Structure
-| Code     | [TestMethodUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/TestMethodUsage/TestMethodUsageAnalyzer.cs)
+| Topic    | Value                                                                                                                                          |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| Id       | NUnit1006                                                                                                                                      |
+| Severity | Error                                                                                                                                          |
+| Enabled  | True                                                                                                                                           |
+| Category | Structure                                                                                                                                      |
+| Code     | [TestMethodUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/TestMethodUsage/TestMethodUsageAnalyzer.cs) |
 
 ## Description
 
@@ -32,7 +32,8 @@ public void NUnit1006SampleTest(int inputValue)
 
 ### Explanation
 
-An `ExpectedResult` was defined, but the return type of the method in our sample is of type `void`, meaning it does not return a result.
+An `ExpectedResult` was defined, but the return type of the method in our sample is of type `void`, meaning it does not
+return a result.
 
 ### Fix
 
@@ -61,7 +62,8 @@ public string NUnit1006SampleTest(int inputValue)
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

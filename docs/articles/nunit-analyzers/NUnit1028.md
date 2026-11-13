@@ -2,17 +2,18 @@
 
 ## The non-test method is public
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit1028
-| Severity | Info
-| Enabled  | True
-| Category | Structure
-| Code     | [NonTestMethodAccessibilityLevelAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/NonTestMethodAccessibilityLevel/NonTestMethodAccessibilityLevelAnalyzer.cs)
+| Topic    | Value                                                                                                                                                                                          |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Id       | NUnit1028                                                                                                                                                                                      |
+| Severity | Info                                                                                                                                                                                           |
+| Enabled  | True                                                                                                                                                                                           |
+| Category | Structure                                                                                                                                                                                      |
+| Code     | [NonTestMethodAccessibilityLevelAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/NonTestMethodAccessibilityLevel/NonTestMethodAccessibilityLevelAnalyzer.cs) |
 
 ## Description
 
 A fixture should not contain any public non-test methods.
+
 There are two exceptions: A public constructor and an `IDisposable.Dispose` method implementation.
 
 ## Motivation
@@ -29,7 +30,8 @@ methods to a separate class used by the relevant test fixtures.
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

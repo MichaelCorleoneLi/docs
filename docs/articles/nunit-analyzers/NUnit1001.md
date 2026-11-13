@@ -2,17 +2,18 @@
 
 ## The individual arguments provided by a TestCaseAttribute must match the type of the corresponding parameter of the method
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit1001
-| Severity | Error
-| Enabled  | True
-| Category | Structure
-| Code     | [TestCaseUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/TestCaseUsage/TestCaseUsageAnalyzer.cs)
+| Topic    | Value                                                                                                                                    |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| Id       | NUnit1001                                                                                                                                |
+| Severity | Error                                                                                                                                    |
+| Enabled  | True                                                                                                                                     |
+| Category | Structure                                                                                                                                |
+| Code     | [TestCaseUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/TestCaseUsage/TestCaseUsageAnalyzer.cs) |
 
 ## Description
 
-The individual arguments provided by a TestCaseAttribute must match the type of the corresponding parameter of the method.
+The individual arguments provided by a TestCaseAttribute must match the type of the corresponding parameter of the
+method.
 
 ## Motivation
 
@@ -28,11 +29,18 @@ public void SampleTest(int numberValue)
 {
     Assert.That(numberValue, Is.EqualTo(1));
 }
+
+[TestCase<double>(42)]
+public void SampleTest(int numberValue)
+{
+    Assert.That(numberValue, Is.EqualTo(1));
+}
 ```
 
 ### Problem
 
-In the test case above, `true` in the test case indicates that `numberValue` should be a boolean. However, the test declares that `numberValue` is an integer. This will lead to a runtime failure.
+In the test case above, `true` in the test case indicates that `numberValue` should be a boolean. However, the test
+declares that `numberValue` is an integer. This will lead to a runtime failure.
 
 ### Fix
 
@@ -65,7 +73,8 @@ public void SampleTest(int numberValue)
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

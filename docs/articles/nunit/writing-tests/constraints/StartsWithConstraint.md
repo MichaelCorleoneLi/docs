@@ -1,36 +1,54 @@
+---
+uid: constraint-startswith
+---
+
 # StartsWith Constraint
 
-`StartsWithConstraint` tests for an initial string.
+`StartsWithConstraint` tests that a string begins with the expected substring.
 
-## Constructor
-
-```csharp
-StartsWithConstraint(string expected)
-```
-
-## Syntax
+## Usage
 
 ```csharp
 Does.StartWith(string expected)
-StartsWith(string expected)
+Does.Not.StartWith(string expected)
 ```
 
 ## Modifiers
 
 ```csharp
-...IgnoreCase
+.IgnoreCase
+.Using(StringComparison comparisonType)
+.Using(CultureInfo culture)
 ```
 
-## Examples of Use
+## Examples
+
+[!code-csharp[StartsWithConstraintExamples](~/snippets/Snippets.NUnit/Constraints/StringConstraintSnippets.cs#StartsWithConstraintExamples)]
+
+### Specifying a StringComparison
+
+[!code-csharp[StartsWithConstraintStringComparisonExamples](~/snippets/Snippets.NUnit/Constraints/StringConstraintSnippets.cs#StartsWithConstraintStringComparisonExamples)]
+
+### Specifying a CultureInfo
+
+The `Using(CultureInfo)` modifier allows for culture-specific string comparisons.
+It can be combined with `.IgnoreCase` for case-insensitive culture-aware comparisons:
 
 ```csharp
-string phrase = "Make your tests fail before passing!"
+// Using Turkish culture where 'i' and 'I' have special casing rules
+Assert.That("TITLE text", Does.StartWith("title").IgnoreCase.Using(new CultureInfo("tr-TR")));
 
-Assert.That(phrase, Does.StartWith("Make"));
-Assert.That(phrase, Does.Not.StartWith("Break"));
+// Culture-specific comparison without case-insensitivity
+Assert.That("Straße Street", Does.StartWith("Straße").Using(new CultureInfo("de-DE")));
 ```
 
 ## Notes
 
-1. **StartsWith** may appear only in the body of a constraint
-   expression or when the inherited syntax is used.
+1. Only one `Using` modifier may be specified. Attempting to use multiple `Using` modifiers will throw an
+   `InvalidOperationException`.
+
+## See Also
+
+* [EndsWith Constraint](EndsWithConstraint.md)
+* [Substring Constraint](SubstringConstraint.md)
+* [Regex Constraint](RegexConstraint.md)

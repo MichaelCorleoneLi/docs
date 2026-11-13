@@ -2,17 +2,18 @@
 
 ## The type of the value specified via ExpectedResult must match the return type of the method
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit1005
-| Severity | Error
-| Enabled  | True
-| Category | Structure
-| Code     | [TestMethodUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/TestMethodUsage/TestMethodUsageAnalyzer.cs)
+| Topic    | Value                                                                                                                                          |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| Id       | NUnit1005                                                                                                                                      |
+| Severity | Error                                                                                                                                          |
+| Enabled  | True                                                                                                                                           |
+| Category | Structure                                                                                                                                      |
+| Code     | [TestMethodUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/TestMethodUsage/TestMethodUsageAnalyzer.cs) |
 
 ## Description
 
-The type of the value specified via ExpectedResult must match the return type of the method. Otherwise, this will lead to an error at run-time.
+The type of the value specified via ExpectedResult must match the return type of the method. Otherwise, this will lead
+to an error at run-time.
 
 ## Motivation
 
@@ -32,7 +33,8 @@ public int NUnit1005SampleTest(int inputValue)
 
 ### Explanation
 
-The sample above uses NUnit's `ExpectedResult` syntax. It defines a result of `true` (a `bool`) but the return type of the method is `int`.
+The sample above uses NUnit's `ExpectedResult` syntax. It defines a result of `true` (a `bool`) but the return type of
+the method is `int`.
 
 ### Fix
 
@@ -61,7 +63,8 @@ public bool NUnit1005SampleTest(int inputValue)
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

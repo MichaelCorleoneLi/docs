@@ -1,40 +1,47 @@
 {
-    "version": "0.1",
+    "version": "0.2",
     "language": "en",
     "words": [
         "buildable",
+        "choco",
+        "chocolatey",
         "CODEPAGE",
         "Codespaces",
         "combinatorially",
         "composability",
+        "discoverability",
         "Dogfood",
         "DWORD",
         "Enumerables",
+        "frameworkteam",
         "Guid",
         "Guids",
         "Hashtable",
         "hotfix",
         "hotfixes",
         "intellisense",
+        "Interpolatable",
         "ints",
         "JetBrains",
         "Linq",
         "nameof",
         "nuget",
-        "chocolatey",
-        "choco",
-        "NUnit",
         "nunit",
+        "NUnit",
         "nuspecs",
         "Obsoletion",
         "Parallelizable",
         "parallelization",
         "paramref",
+        "parameterless",
         "PDBs",
         "Pluggable",
         "prefilter",
         "Randomizer",
+        "Refactorings",
+        "reimplementation",
         "Remoting",
+        "repros",
         "ReSharper",
         "ruleset",
         "runtimes",
@@ -42,17 +49,21 @@
         "Serializable",
         "Silverlight",
         "teamcity",
+        "Tracelog",
+        "Typeinfo",
         "typeof",
         "typeparam",
         "typeparamref",
-        "ULPs",
         "Ulps",
+        "ULPs",
+        "uninstantiated",
         "unmanaged",
         "VSIX",
         "VSIXes",
         "vstest",
         "wiki",
-        "writability"
+        "writability",
+        "yourfoldername"
     ],
     "ignoreWords": [
         "addin",
@@ -133,12 +144,84 @@
         "snupkg",
         "testparam",
         "gleb",
-        "osokin"
+        "osokin",
+        "lahma",
+        "unsortable",
+        "Dalsbø",
+        "Delarosbil",
+        "Mikkel",
+        "Nylander",
+        "Bundgaard",
+        "Weerdenburg",
+        "Ihor",
+        "Sychevskyi",
+        "Colvin",
+        "Cropp",
+        "Maddock",
+        "Frans",
+        "Bouma",
+        "TIMESPAN",
+        "yowko"
+    ],
+    "patterns": [
+        {
+            "name": "Markdown links",
+            "pattern": "\\((.*)\\)",
+            "description": ""
+        },
+        {
+            "name": "Markdown code blocks",
+            "pattern": "/^(\\s*`{3,}).*[\\s\\S]*?^\\1/gmx",
+            "description": "Taken from the cSpell example at https://cspell.org/configuration/patterns/#verbose-regular-expressions"
+        },
+        {
+            "name": "Inline code blocks",
+            "pattern": "\\`([^\\`\\r\\n]+?)\\`",
+            "description": "https://stackoverflow.com/questions/41274241/how-to-capture-inline-markdown-code-but-not-a-markdown-code-fence-with-regex"
+        },
+        {
+            "name": "Link contents",
+            "pattern": "\\<a(.*)\\>",
+            "description": ""
+        },
+        {
+            "name": "Snippet references",
+            "pattern": "-- snippet:(.*)",
+            "description": ""
+        },
+        {
+            "name": "Snippet references 2",
+            "pattern": "\\<\\[sample:(.*)",
+            "description": "another kind of snippet reference"
+        },
+        {
+            "name": "Multi-line code blocks",
+            "pattern": "/^\\s*```[\\s\\S]*?^\\s*```/gm"
+        },
+        {
+            "name": "HTML Tags",
+            "pattern": "<[^>]*>",
+            "description": "Reference: https://stackoverflow.com/questions/11229831/regular-expression-to-remove-html-tags-from-a-string"
+        },
+        {
+            "name": "UID Lines",
+            "pattern": "uid: (.*)"
+        }
     ],
     "ignoreRegExpList": [
-        "\\((.*)\\)", // Markdown links
-        "uid: (.*)", // uid lines,
-        "```[a-z]*\n[\\s\\S]*?\n```", // Markdown code blocks. h/t https://coderwall.com/p/r6b4xg/regex-to-match-github-s-markdown-code-blocks,
-        "\\`([^\\`].*?)\\`" // inline code blocks. h/t https://stackoverflow.com/questions/41274241/how-to-capture-inline-markdown-code-but-not-a-markdown-code-fence-with-regex
+        "Markdown links",
+        "Markdown code blocks",
+        "Inline code blocks",
+        "Link contents",
+        "Snippet references",
+        "Snippet references 2",
+        "Multi-line code blocks",
+        "HTML Tags",
+        "UID Lines"
+    ],
+    "ignorePaths": [
+        "**/articles/nunit-engine/release-notes.md",
+        "**/articles/nunit/release-notes/framework.md",
+        "**/articles/vs-test-adapter/AdapterV*-Release-Notes.md"
     ]
 }

@@ -1,24 +1,59 @@
+---
+uid: attribute-maxtime
+---
+
 # MaxTime
 
-The **MaxTimeAttribute** is used on test methods to specify a maximum time
-in milliseconds for a test case. If the test case takes longer than the
-specified time to complete, it is reported as a failure.
+`MaxTimeAttribute` is used on test methods to specify a maximum time in milliseconds for a test case. If the test takes longer than the specified time to complete, it is reported as a failure.
 
-## Example
+Unlike `CancelAfter`, this attribute does **not** cancel the test - it waits for the test to complete and then checks the elapsed time.
+
+## Constructor
 
 ```csharp
-[Test, MaxTime(2000)]
-public void TimedTest()
-{
-    /* ... */
-}
+MaxTimeAttribute(int milliseconds)
 ```
+
+| Parameter      | Type  | Description                                                                        |
+| -------------- | ----- | ---------------------------------------------------------------------------------- |
+| `milliseconds` | `int` | The maximum elapsed time in milliseconds. If the test exceeds this time, it fails. |
+
+## Named Parameters
+
+| Parameter     | Type  | Description                                                                                                                                                                                                                             |
+| ------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WarningTime` | `int` | An optional warning threshold in milliseconds. If the test takes longer than this time but less than the maximum time, the test result is set to `Warning`. A value of `0` (the default) disables the warning threshold. (**NUnit 5+**) |
+
+## Applies To
+
+| Test Methods | Test Fixtures (Classes) | Assembly |
+| ------------ | ----------------------- | -------- |
+| ✅           | ❌                      | ❌       |
+
+## Examples
+
+### Basic Usage
+
+[!code-csharp[MaxTimeBasic](~/snippets/Snippets.NUnit/Attributes/MaxTimeAttributeExamples.cs#MaxTimeBasic)]
+
+### Assertion Failures Take Precedence
+
+[!code-csharp[MaxTimeVsAssertions](~/snippets/Snippets.NUnit/Attributes/MaxTimeAttributeExamples.cs#MaxTimeVsAssertions)]
+
+### Warning Threshold
+
+[!code-csharp[MaxTimeWarningThreshold](~/snippets/Snippets.NUnit/Attributes/MaxTimeAttributeExamples.cs#MaxTimeWarningThreshold)]
 
 ## Notes
 
-1. Any assertion failures take precedence over the elapsed time check.
+1. Any assertion failures take precedence over the elapsed time check. If a test both fails an assertion and exceeds the time limit, the assertion failure is reported.
+2. This attribute does **not** cancel or abort the test if the time is exceeded. It waits for the test to complete, then compares the elapsed time to the maximum.
+3. For tests that need to be cancelled when they exceed a time limit, use [CancelAfter Attribute](xref:attribute-cancelafter) instead.
+4. The timing includes the test method execution only, not `SetUp` or `TearDown` methods.
+5. The [Timeout Attribute](xref:attribute-timeout) uses `Thread.Abort` and only works on .NET Framework.
+6. The optional `WarningTime` named parameter (added in **NUnit 5+**) sets a soft threshold: if the test exceeds it but still passes within the maximum time, the result is `Warning` rather than `Failure`.
 
-2. This attribute does not cancel the test if the time
-   is exceeded. It merely waits for the test to complete and then
-   compares the elapsed time to the specified maximum. If you want to
-   cancel long-running tests, see [Timeout Attribute](timeout.md).
+## See Also
+
+* [CancelAfter Attribute](xref:attribute-cancelafter)
+* [Timeout Attribute](xref:attribute-timeout)

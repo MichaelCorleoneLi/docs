@@ -1,14 +1,12 @@
+---
+uid: constraint-fileordirectoryexists
+---
+
 # FileOrDirectoryExists Constraint
 
-`FileOrDirectoryExistsConstraint` tests that a File or Directory exists.
+`FileOrDirectoryExistsConstraint` tests that a file or directory exists at the specified path.
 
-## Constructor
-
-```csharp
-FileOrDirectoryExistsConstraint()
-```
-
-## Syntax
+## Usage
 
 ```csharp
 Does.Exist
@@ -18,18 +16,22 @@ Does.Not.Exist
 ## Modifiers
 
 ```csharp
-IgnoreDirectories
-IgnoreFiles
+.IgnoreDirectories   // Only check for file existence
+.IgnoreFiles         // Only check for directory existence
 ```
 
-## Examples of Use
+## Examples
 
-```csharp
-Assert.That(fileStr, Does.Exist);
-Assert.That(dirStr, Does.Exist);
-Assert.That(fileStr, Does.Not.Exist);
-Assert.That(dirStr, Does.Not.Exist);
+[!code-csharp[FileOrDirectoryExistsConstraintExamples](~/snippets/Snippets.NUnit/Constraints/SpecialConstraintSnippets.cs#FileOrDirectoryExistsConstraintExamples)]
 
-Assert.That(new FileInfo(fileStr), Does.Exist);
-Assert.That(new DirectoryInfo(dirStr), Does.Exist);
-```
+## Notes
+
+1. The constraint accepts string paths, `FileInfo`, or `DirectoryInfo` objects.
+2. By default, the constraint passes if either a file or directory exists at the path.
+3. Use `.IgnoreDirectories` to require a file specifically.
+4. Use `.IgnoreFiles` to require a directory specifically.
+
+## See Also
+
+* [EmptyDirectory Constraint](EmptyDirectoryConstraint.md) - Test if directory is empty
+* [SamePath Constraint](SamePathConstraint.md) - Compare paths

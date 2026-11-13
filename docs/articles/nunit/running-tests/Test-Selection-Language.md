@@ -4,19 +4,28 @@ uid: testselectionlanguage
 
 # Test Selection Language
 
-The console command-line allows you to specify a filter, which will select which tests are executed. This is done using the --where option, followed by an expression in NUnit's Test Selection Language (TSL), a simple domain-specific language designed for this purpose.
+The console command-line allows you to specify a filter, which will select which tests are executed. This is done using
+the --where option, followed by an expression in NUnit's Test Selection Language (TSL), a simple domain-specific
+language designed for this purpose.
 
-Some of the characters used in the expression, such as space, | or &, may have a special meaning when entered on the command-line. In such a case, you should place the expression in quotation marks.
+The --where option can be used with the `dotnet test` as `-- NUnit.Where` (note the space after the --). This will
+inject this into the runsettings. You can also add the same to a `.runsettings` file, see [Adapter
+options](https://docs.nunit.org/articles/vs-test-adapter/Tips-And-Tricks.html) and [this blog
+post](https://blog.prokrams.com/2019/12/16/nunit3-filter-dotnet/).
+
+Some of the characters used in the expression, such as space, | or &, may have a special meaning when entered on the
+command-line. In such a case, you should place the expression in quotation marks.
 
 ```cmd
+  dotnet test -- NUnit.Where="cat == Urgent or Priority == High"
   nunit3-console mytest.dll --where "cat == Urgent || Priority == High"
-```
 
-Note that TSL is handled by the NUnit engine but requires framework support to actually select the tests. The NUnit 3.0 framework supports it fully. See below for support limitations in NUnit V2 tests.
+```
 
 ## Simple Expressions
 
-Simple Expressions are essentially comparisons, consisting of a key word or property name on the left-hand side, an operator and some constant value on the right-hand side. Here are some examples:
+Simple Expressions are essentially comparisons, consisting of a key word or property name on the left-hand side, an
+operator and some constant value on the right-hand side. Here are some examples:
 
 ```text
   cat == Data
@@ -35,8 +44,10 @@ The following key words are recognized on the left-hand side of the comparison:
 * `namespace` - The fully qualified name of the namespace containing the test(s), e.g. My.Name.Space
 * `method` - The name of the method, e.g. TestMethod
 * `cat` - A category assigned to the test, e.g. SmokeTests
+* `partition` - A numbered partition of the test suite; see [Partitioning Tests](xref:partitioningtests)
 
-If the left-hand side of the comparison does not consist of a key word, it is treated as the name of a property on the test whose value is to be checked. See below for restrictions on use of properties.
+If the left-hand side of the comparison does not consist of a key word, it is treated as the name of a property on the
+test whose value is to be checked. See below for restrictions on use of properties.
 
 The following operators are supported
 
@@ -45,7 +56,11 @@ The following operators are supported
 * `=~` to match a regular expression
 * `!~` to not match a regular expression
 
-The right-hand side of the comparison may be a sequence of non-blank, non-special characters or a quoted string. Quoted strings may be surrounded by single quotes (`'`), double quotes (`"`) or slashes (`/`) and may contain any character except the quote character used to delimit them. If it is necessary to include the quote character in the string, it may be escaped using a backslash (\) as may the backslash itself should you need to include one. The following expressions all do the same thing:
+The right-hand side of the comparison may be a sequence of non-blank, non-special characters or a quoted string. Quoted
+strings may be surrounded by single quotes (`'`), double quotes (`"`) or slashes (`/`) and may contain any character
+except the quote character used to delimit them. If it is necessary to include the quote character in the string, it may
+be escaped using a backslash (\) as may the backslash itself should you need to include one. The following expressions
+all do the same thing:
 
 ```text
   test =~ /TestCaseAttributeTest/
@@ -55,19 +70,28 @@ The right-hand side of the comparison may be a sequence of non-blank, non-specia
   test=~TestCaseAttributeTest
 ```
 
-For matching regular expressions, NUnit uses .NET's `Regex.IsMatch` method. For detailed information on the syntax of regular expressions in .NET, see [Regular Expressions in .NET](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference).
+For matching regular expressions, NUnit uses .NET's `Regex.IsMatch` method. For detailed information on the syntax of
+regular expressions in .NET, see [Regular Expressions in
+.NET](https://docs.microsoft.com/dotnet/standard/base-types/regular-expression-language-quick-reference).
 
-For specifying qualified names, the same format as used for reflection should be used. For example `My.Name.Space.TestFixture+NestedFixture` can be used to select a nested fixture. For detailed information see: [Specifying Special Characters](https://docs.microsoft.com/dotnet/framework/reflection-and-codedom/specifying-fully-qualified-type-names#specifying-special-characters)
+For specifying qualified names, the same format as used for reflection should be used. For example
+`My.Name.Space.TestFixture+NestedFixture` can be used to select a nested fixture. For detailed information see:
+[Specifying Special
+Characters](https://learn.microsoft.com/en-us/dotnet/framework/reflection-and-codedom/specifying-fully-qualified-type-names#specifying-special-characters)
 
 ## Filtering By Namespace
 
-Using the `namespace` keyword with `==` will _not_ match on sub-namespaces. For example by using the filter `namespace == My.Name.Space`, a test `My.Name.Space.MyFixture` will be selected but a test `My.Name.Space.SubNamespace.MyFixture` will not, since its namespace is not __equal__ to the namespace provided.
+Using the `namespace` keyword with `==` will _not_ match on sub-namespaces. For example by using the filter `namespace
+== My.Name.Space`, a test `My.Name.Space.MyFixture` will be selected but a test `My.Name.Space.SubNamespace.MyFixture`
+will not, since its namespace is not __equal__ to the namespace provided.
 
-In order to inclusively select namespaces, a regular expression can be used. For example to match _all_ namespaces under the root namespace `My.Name.Space`, the following filter can be used `namespace =~ ^My\.Name\.Space($|\.)`
+In order to inclusively select namespaces, a regular expression can be used. For example to match _all_ namespaces under
+the root namespace `My.Name.Space`, the following filter can be used `namespace =~ ^My\.Name\.Space($|\.)`
 
 ## Filtering Based on Properties
 
-Although the syntax will accept any property name - including names that don't actually exist - filtering will only work on existing, string-valued properties.  The following properties are created by NUnit and have string values:
+Although the syntax will accept any property name - including names that don't actually exist - filtering will only work
+on existing, string-valued properties.  The following properties are created by NUnit and have string values:
 
 * Author
 * Category
@@ -77,19 +101,39 @@ Although the syntax will accept any property name - including names that don't a
 * TestOf
 * IgnoreUntilDate
 
-In general, these properties were not created with filtering in mind, but you can use them if it suits your needs. Using the Category property currently accomplishes the same thing as the cat keyword. You should be aware that the use of these properties by NUnit is considered an implementation detail and they may change in the future.
+In general, these properties were not created with filtering in mind, but you can use them if it suits your needs. Using
+the Category property currently accomplishes the same thing as the cat keyword. You should be aware that the use of
+these properties by NUnit is considered an implementation detail and they may change in the future.
 
-We envision that most filtering by property will be based on user-defined properties, created for this purpose by inheriting from [Property Attribute](xref:propertyattribute). When defining a property, you should keep the limitation to string values in mind. For example, a PriorityAttribute taking values of "High", "Medium" and "Low" could be used for filtering, while one that took the integers 1, 2 and 3 could not.
+We envision that most filtering by property will be based on user-defined properties, created for this purpose by
+inheriting from [Property Attribute](xref:attribute-property). When defining a property, you should keep the limitation
+to string values in mind. For example, a PriorityAttribute taking values of "High", "Medium" and "Low" could be used for
+filtering, while one that took the integers 1, 2 and 3 could not.
 
 ## Filtering by Test Id
 
-In addition to the left-hand-side items listed, NUnit supports filtering by the test id through the `id` keyword. The id may only be selected using the `==` operator and is intended only for use by programs that have explored the tests and cached the ids, not for general use by users. The reason for this restriction is that users have no way of predicting the id that will be assigned to a test. The id is not persistent across test runs and its format can differ between different framework drivers.
+In addition to the left-hand-side items listed, NUnit supports filtering by the test id through the `id` keyword. The id
+may only be selected using the `==` operator and is intended only for use by programs that have explored the tests and
+cached the ids, not for general use by users. The reason for this restriction is that users have no way of predicting
+the id that will be assigned to a test. The id is not persistent across test runs and its format can differ between
+different framework drivers.
+
+## Partitioning Tests
+
+Use the `partition` keyword with a value of `PARTITION/TOTAL` to select one numbered partition. Partition numbers start
+at 1. For example, `partition == 2/5` selects partition 2 of 5. Add `:fixture` to the value to keep each fixture's tests
+together, as in `partition == 2/5:fixture`. Without a suffix, the filter partitions individual test cases.
+
+Partition filters were added in NUnit 3.14. Fixture partitioning was added in NUnit 5.1. Support for partition filters
+was added to the NUnit Console Runner in 3.17 and to NUnit3TestAdapter (including `dotnet test`) in 4.6.
 
 ## Compound Expressions
 
 Simple expressions may be combined using logical and, logical or, parentheses or negation operators.
 
-Logical and is expressed as `&&`, `&` or `and`. Logical or is expressed as `||`, `|`, or `or`. The negation operator is `!` and may only appear before a left parenthesis. The letter variants, `and` and `or`, are provided for use on the command-line in systems that give `&` and `|` a special meaning.
+Logical and is expressed as `&&`, `&` or `and`. Logical or is expressed as `||`, `|`, or `or`. The negation operator is
+`!` and may only appear before a left parenthesis. The letter variants, `and` and `or`, are provided for use on the
+command-line in systems that give `&` and `|` a special meaning.
 
 The following are valid compound expressions:
 
@@ -102,7 +146,9 @@ The following are valid compound expressions:
 
 ## Usage on the Command Line
 
-Because TSL contains special characters and may contain blank spaces, you will usually want to put the expression in quotes on the command line. Consequently, any strings within the TSL expression will most likely need to use an alternate quote character. For example:
+Because TSL contains special characters and may contain blank spaces, you will usually want to put the expression in
+quotes on the command line. Consequently, any strings within the TSL expression will most likely need to use an
+alternate quote character. For example:
 
 ```cmd
   nunit-console test.dll --where "method =~ /Source.*Test/ && class =~ 'My.Namespace.Classname'"
@@ -110,6 +156,9 @@ Because TSL contains special characters and may contain blank spaces, you will u
 
 ## Support in NUnit V2
 
-The driver for NUnit V2 supports a subset of TSL. Because the V2 NUnit framework only allowed filtering on test names and categories, you may only use the `cat` and `test` keywords in comparisons. In addition, the regular expression operators `=~` and `!~` are not supported.
+The driver for NUnit V2 supports a subset of TSL. Because the V2 NUnit framework only allowed filtering on test names
+and categories, you may only use the `cat` and `test` keywords in comparisons. In addition, the regular expression
+operators `=~` and `!~` are not supported.
 
-If you use any of the unsupported keywords or operators with V2 tests, an error message is displayed and the tests are not run.
+If you use any of the unsupported keywords or operators with V2 tests, an error message is displayed and the tests are
+not run.

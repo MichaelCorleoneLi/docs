@@ -8,19 +8,21 @@
   href: Resources.md
 - name: Known Problems
   href: Known-Problems.md
-- name: Tips and Tricks
+- name: Configuration with runsettings
   href: Tips-And-Tricks.md
+- name: Microsoft.Testing.Platform (MTP)
+  href: NUnit-And-Microsoft-Test-Platform.md
 - name: Trace And Debug Output
   href: Trace-and-Debug.md
 - name: Supported Frameworks
   href: Supported-Frameworks.md
+- name: Adapter-Engine Compatibility
+  href: Adapter-Engine-Compatibility.md
 - name: Debugging the Adapter
   href: Debugging.md
 - name: Debugger Source-Stepping
   href: Adapter-Source-Stepping.md
-- name: Release Notes V3
-  href: Adapter-Release-Notes.md
-- name: Release Notes V2
-  href: AdapterV2-Release-Notes.md
+- name: Release Notes V4
+  href: AdapterV4-Release-Notes.md
 - name: License
   href: Adapter-License.md

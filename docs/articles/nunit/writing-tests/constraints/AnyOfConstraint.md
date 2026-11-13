@@ -1,35 +1,47 @@
+---
+uid: constraint-anyof
+---
+
 # AnyOf Constraint
 
-`AnyOfConstraint` is used to determine whether a value is equal to any of the expected values.
+`AnyOfConstraint` tests that a value equals any one of a set of expected values.
 
-## Constructor
+> [!NOTE]
+> Pass expected values as individual parameters, not as an array. To test if a collection contains a specific
+> value, use [SomeItemsConstraint](SomeItemsConstraint.md) instead.
 
-```csharp
-AnyOfConstraint(object[] expected)
-```
-
-## Syntax
+## Usage
 
 ```csharp
-Is.AnyOf(object[] expected)
+Is.AnyOf(params object[] expected)
 ```
 
 ## Modifiers
 
 ```csharp
-...Using(IComparer comparer)
-...Using<T>(IEqualityComparer comparer)
-...Using<T>(Func<T, T, bool>)
-...Using<T>(IComparer<T> comparer)
-...Using<T>(Comparison<T> comparer)
-...Using<T>(IEqualityComparer<T> comparer)
+.IgnoreCase
+.IgnoreWhiteSpace              // NUnit 4.2+
+.Using(IComparer comparer)
+.Using(IEqualityComparer comparer)
+.Using<T>(IComparer<T> comparer)
+.Using<T>(IEqualityComparer<T> comparer)
+.Using<T>(Comparison<T> comparer)
+.Using<T>(Func<T, T, bool> comparer)
+.UsingPropertiesComparer()     // NUnit 4.1+
 ```
 
-## Examples of Use
+## Examples
 
-```csharp
-int[] iarray = new int[] { 0, -1, 42, 100 }
+[!code-csharp[AnyOfConstraintExamples](~/snippets/Snippets.NUnit/Constraints/SpecialConstraintSnippets.cs#AnyOfConstraintExamples)]
 
-Assert.That(42, Is.AnyOf(iarray));
-Assert.That(myOwnObject, Is.AnyOf(myArray).Using(myComparer));
-```
+## Notes
+
+1. This is for testing a single value against multiple options.
+2. For testing if a collection contains a value, use `Has.Member()` or `Does.Contain()`.
+3. All comparison modifiers apply to the equality check between the actual and each expected value.
+
+## See Also
+
+* [SomeItems Constraint](SomeItemsConstraint.md) - Test if collection contains a value
+* [Equal Constraint](EqualConstraint.md) - Test equality with single value
+* [Or Constraint](OrConstraint.md) - Alternative way to express multiple options

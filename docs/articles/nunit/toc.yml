@@ -1,5 +1,9 @@
 - name: Introduction
   href: intro.md
+- name: NUnit 5 New Features
+  href: V5NewFeatures.md
+- name: NUnit 5 Breaking Changes
+  href: V5BreakingChanges.md
 - name: Release Notes
   href: release-notes/toc.yml
   topicHref: release-notes/framework.md
@@ -10,7 +14,7 @@
   topicHref: getting-started/installation.md
 - name: Writing Tests
   href: writing-tests/toc.yml
-  topicHref: writing-tests/attributes.md
+  topicHref: writing-tests/ordinary-tests.md
 - name: Running Tests
   href: running-tests/toc.yml
   topicHref: running-tests/Index.md

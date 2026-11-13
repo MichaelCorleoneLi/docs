@@ -1,6 +1,6 @@
 # NUnit Documentation
 
-This repository serves the content that is found at <http://docs.nunit.org>.
+This repository serves the content that is found at <https://docs.nunit.org>.
 
 [![NUnit Documentation Build Process](https://github.com/nunit/docs/actions/workflows/build-process.yml/badge.svg)](https://github.com/nunit/docs/actions/workflows/build-process.yml)
 
@@ -13,12 +13,11 @@ The docs site is a project within the NUnit organization. [Read the vision at VI
 * Prerequisite: Install [docfx](https://dotnet.github.io/docfx/) (using [Chocolatey](https://chocolatey.org/)? The command is `choco install docfx -y`)
 * Pull this repository
 * `cd docs`
-* Run `docfx build`
 * Run `docfx serve` and navigate to <http://localhost:8080/_site>
 
-## How to Build These Docs Within GitHub Codespaces
+## How to Build These Docs Within GitHub Codespaces or a Dev Container
 
-Fancy using GitHub Codespaces for your work on these docs? You can!
+Fancy using GitHub Codespaces for your work on these docs? Or want to work in the environment locally? You can!
 
 * Open the branch you want to work on in GitHub Codespaces
 * The tooling, VS code extensions, etc. that we use will immediately be available to you.
@@ -26,20 +25,68 @@ Fancy using GitHub Codespaces for your work on these docs? You can!
 * To serve / preview from the Codespaces terminal: `serve` (we've taken care of the rest for you)
 * To run markdown linting from the Codespaces terminal: `lint` (we've taken care of the rest for you)
 * To run spellcheck from the Codespaces terminal: `spellcheck` (we've taken care of the rest for you)
+* To build/test the snippets from the Codespaces terminal: `snippets` (we've taken care of the rest for you)
 
 We'll be working on follow-ups to make this more user-friendly, but it's now workable.
 
+### Troubleshooting: Dev Container fails to start on Windows with WSL
+
+If the image builds but the container fails to start with an error like:
+
+```text
+docker: Error response from daemon: accessing specified distro mount service: stat /run/guest-services/distro-services/ubuntu.sock: no such file or directory
+```
+
+VS Code is trying to mount the WSLg Wayland socket from your WSL distro into the container, and Docker Desktop can't reach
+that distro. The docs tooling doesn't need it, so the simplest fix is to turn it off in your VS Code **user** settings:
+
+```json
+"dev.containers.mountWaylandSocket": false
+```
+
+Then run **Dev Containers: Rebuild and Reopen in Container**. Alternatively, enable WSL integration for your distro in
+Docker Desktop (Settings → Resources → WSL integration), or run `wsl --shutdown` and restart Docker Desktop.
+
 ## Linting Locally
 
-* Install `markdownlint`: `npm install markdownlint-cli -g`
+* Install `markdownlint-cli2`: `npm install markdownlint-cli2 -g`
 * Open the root of the project (`/`, not `/docs`)
-* Run `markdownlint docs/**/*.md`
+* Run `markdownlint-cli2 --config ".github/linters/.markdownlint.yml" "docs/**/*.md"`
+
+We recommend adding the following settings to your VSCode environment if they don't come through in the repository:
+
+```json
+    "editor.codeActionsOnSave": {
+        "source.fixAll.markdownlint": "always"
+    }
+```
+
+This will fix 80% of the markdown linting issues for you upon save.
 
 We'd love your contributions! See [The contributing guide](CONTRIBUTING.md) for how to get involved.
+
+## Building the API docs locally
+
+The NUnit source code is in a separate repository from the docs, so we typically generate this at build time by copying
+published code into a build-specific folder (`/code-output`). From there, `docfx` transforms the xmldoc comments that
+are alongside the DLLs into HTML files.
+
+Sometimes you may need/want to reproduce this locally. You can take the following steps to do so:
+
+* Go to the NUnit release you want in the GitHub Releases
+* Download & extract the `.zip` file of the release contents
+* Copy the contents of one of the release targets, e.g. `net6.0`, into a `code-outputs` folder in the root of the
+repository.
+* Run the `docfx` command as you normally would.
 
 ## How the Docs are Built and Deployed
 
 * We build the docs via the GitHub actions located in `./github/workflows`.
 * The workflow uses a container with docfx installed; the container builds the docs.
-* The workflow then uses another container to push the results to the `gh-pages` branch, using a personal access token that is stored in the repository's settings.
+* The workflow then uses another container to push the results to the `gh-pages` branch, using a personal access token
+that is stored in the repository's settings.
 * GitHub serves the outputted site from the `gh-pages` branch, and the DNS of `docs.nunit.org` points there.
+
+### Pull Request Previews
+
+Every pull request gets a live preview of the site at `https://pr-<number>.nunit-docs.pages.dev`, hosted on Cloudflare Pages and linked from a bot comment on the PR. The preview updates on each push and is removed when the PR closes. See [.github/PR-PREVIEWS.md](.github/PR-PREVIEWS.md) for how it works, the security rules for the workflows involved, and troubleshooting.

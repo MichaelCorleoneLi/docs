@@ -2,13 +2,13 @@
 
 ## Missing property required for constraint
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit2022
-| Severity | Error
-| Enabled  | True
-| Category | Assertion
-| Code     | [MissingPropertyAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/MissingProperty/MissingPropertyAnalyzer.cs)
+| Topic    | Value                                                                                                                                          |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| Id       | NUnit2022                                                                                                                                      |
+| Severity | Error                                                                                                                                          |
+| Enabled  | True                                                                                                                                           |
+| Category | Assertion                                                                                                                                      |
+| Code     | [MissingPropertyAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/MissingProperty/MissingPropertyAnalyzer.cs) |
 
 ## Description
 
@@ -39,7 +39,8 @@ Fix your property name, or use another constraint.
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

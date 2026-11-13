@@ -2,32 +2,33 @@
 
 The NUnitLite runner is invoked by executing the test program. If desired, any of the following options may be specified:
 
-| Option | Description |
-| ------ | ----------- |
-| `--test=NAMES` | Comma-separated list of NAMES of tests to run or explore. This option may be repeated. |
-| `--testlist=PATH` | File PATH containing a list of tests to run, one per line. This option may be repeated. |
-| `--prefilter=NAMES` | Comma-separated list of NAMES of test classes or namespaces to be loaded. This option may be repeated. |
-| `--where=EXPRESSION` | Test selection EXPRESSION indicating what tests will be run. |
-| `--params, -p=VALUE` | Define a test parameter. |
-| `--timeout=MILLISECONDS` | Set timeout for each test case in MILLISECONDS. |
-| `--seed=SEED` | Set the random SEED used to generate test cases. |
-| `--workers=NUMBER` | Specify the NUMBER of worker threads to be used in running tests. If not specified, defaults to 2 or the number of processors, whichever is greater. |
-| `--stoponerror` | Stop run immediately upon any test failure or error. |
-| `--wait` | Wait for input before closing console window. |
-| `--work=PATH` | PATH of the directory to use for output files. If not specified, defaults to the current directory. |
-| `--output`, `--out=PATH` | File PATH to contain text output from the tests. |
-| `--err=PATH` | File PATH to contain error output from the tests. |
-| `--result=SPEC` | An output SPEC for saving the test results. This option may be repeated. |
-| `--explore[=SPEC]` | Display or save test info rather than running tests. Optionally provide an output SPEC for saving the test info. This option may be repeated. |
-| `--noresult` | Don't save any test results. |
-| `--labels=VALUE` | Specify whether to write test case names to the output. Values: `Off`, `On`, `All` |
-| `--test-name-format=VALUE` | Non-standard naming pattern to use in generating test names. |
-| `--teamcity` | Turns on use of TeamCity service messages. |
-| `--trace=LEVEL` | Set internal trace LEVEL. Values: `Off`, `Error`, `Warning`, `Info`, `Verbose` (Debug) |
-| `--noheader`, `--noh` | Suppress display of program information at start of run. |
-| `--nocolor`, `--noc` | Displays console output without color. |
-| `--help`, `-h` | Display this message and exit. |
-| `--version`, `-V` | Display the header and exit. |
+| Option                     | Description                                                                                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--test=NAMES`             | Comma-separated list of NAMES of tests to run or explore. This option may be repeated.                                                               |
+| `--testlist=PATH`          | File PATH containing a list of tests to run, one per line. This option may be repeated.                                                              |
+| `--prefilter=NAMES`        | Comma-separated list of NAMES of test classes or namespaces to be loaded. This option may be repeated.                                               |
+| `--where=EXPRESSION`       | Test selection EXPRESSION indicating what tests will be run. See [Test Selection Language](Test-Selection-Language.md) for details.                  |
+| `--params, -p=VALUE`       | Define a test parameter.                                                                                                                             |
+| `--timeout=MILLISECONDS`   | Set timeout for each test case in MILLISECONDS.                                                                                                      |
+| `--seed=SEED`              | Set the random SEED used to generate test cases.                                                                                                     |
+| `--workers=NUMBER`         | Specify the NUMBER of worker threads to be used in running tests. If not specified, defaults to 2 or the number of processors, whichever is greater. |
+| `--mainthread`             | Causes tests to run in the main application thread. Will cause `--workers` to be ignored. (_NUnitLite 4.6+_)                                         |
+| `--stoponerror`            | Stop run immediately upon any test failure or error.                                                                                                 |
+| `--wait`                   | Wait for input before closing console window.                                                                                                        |
+| `--work=PATH`              | PATH of the directory to use for output files. If not specified, defaults to the current directory.                                                  |
+| `--output`, `--out=PATH`   | File PATH to contain text output from the tests.                                                                                                     |
+| `--err=PATH`               | File PATH to contain error output from the tests.                                                                                                    |
+| `--result=SPEC`            | An output SPEC for saving the test results. This option may be repeated.                                                                             |
+| `--explore[=SPEC]`         | Display or save test info rather than running tests. Optionally provide an output SPEC for saving the test info. This option may be repeated.        |
+| `--noresult`               | Don't save any test results.                                                                                                                         |
+| `--labels=VALUE`           | Specify whether to write test case names to the output. Values: `Off`, `On`, `All`                                                                   |
+| `--test-name-format=VALUE` | Non-standard naming pattern to use in generating test names.                                                                                         |
+| `--teamcity`               | Turns on use of TeamCity service messages.                                                                                                           |
+| `--trace=LEVEL`            | Set internal trace LEVEL. Values: `Off`, `Error`, `Warning`, `Info`, `Verbose` (Debug)                                                               |
+| `--noheader`, `--noh`      | Suppress display of program information at start of run.                                                                                             |
+| `--nocolor`, `--noc`       | Displays console output without color.                                                                                                               |
+| `--help`, `-h`             | Display this message and exit.                                                                                                                       |
+| `--version`, `-V`          | Display the header and exit.                                                                                                                         |
 
 ## Description
 
@@ -48,7 +49,7 @@ selection options never even see them.
 
 The `--where` option introduces a _where clause_, the most flexible
 but also the most complex way to introduce tests. See the documentation of
-[Test SelectionLanguage](https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html)
+[Test SelectionLanguage](/articles/nunit/running-tests/Test-Selection-Language.html)
 for details.
 
 The `--test` and `testlist` options allow selecting individual
@@ -65,6 +66,8 @@ the following forms:
 
 * `--OPTION:filename`
 * `--OPTION:filename;format=formatname`
+
+Be aware that the semicolon (;) might need escaping in some terminals.
 
 The `--result` option may use any of the following formats:
 

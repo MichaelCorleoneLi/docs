@@ -2,13 +2,13 @@
 
 ## The TestCaseAttribute provided too few arguments
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit1003
-| Severity | Error
-| Enabled  | True
-| Category | Structure
-| Code     | [TestCaseUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/TestCaseUsage/TestCaseUsageAnalyzer.cs)
+| Topic    | Value                                                                                                                                    |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| Id       | NUnit1003                                                                                                                                |
+| Severity | Error                                                                                                                                    |
+| Enabled  | True                                                                                                                                     |
+| Category | Structure                                                                                                                                |
+| Code     | [TestCaseUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/TestCaseUsage/TestCaseUsageAnalyzer.cs) |
 
 ## Description
 
@@ -33,7 +33,8 @@ public void NUnit1003SampleTest(string parameter1, string parameter2)
 
 ### Explanation
 
-In the sample above, the test expects two parameters (`(string parameter1, string parameter2)`), but only one argument is supplied by the test case (`TestCase("1")`).
+In the sample above, the test expects two parameters (`(string parameter1, string parameter2)`), but only one argument
+is supplied by the test case (`TestCase("1")`).
 
 ### Fix
 
@@ -63,7 +64,8 @@ public void NUnit1003SampleTest(string parameter1)
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

@@ -1,71 +1,102 @@
 ---
-uid: onetimeteardown-attribute
+uid: attribute-onetimeteardown
 ---
 
 # OneTimeTearDown
 
-This attribute is to identify methods that are called once after executing all the tests
-in a fixture. It may appear on methods of a TestFixture or a SetUpFixture.
+`OneTimeTearDownAttribute` marks a method that runs **once** after **every child test finished** under a suite—for that
+fixture or setup-fixture scope. Pair it with [`OneTimeSetUp`](xref:attribute-onetimesetup).
 
-OneTimeTearDown methods may be either static or
-instance methods and you may define more than one of them in a fixture.
-Normally, multiple OneTimeTearDown methods are only defined at different levels
-of an inheritance hierarchy, as explained below.
+Put it on a method inside a [`TestFixture`](xref:attribute-testfixture) or a [`SetUpFixture`](xref:attribute-setupfixture).
+
+Normally you declare multiple `OneTimeTearDown` methods spread across an **inheritance chain** (derived first at runtime,
+then base—see **Inheritance** below). Putting several methods on the **same class** is allowed, but execution **order among
+them is undefined** unless you constrain them logically.
+
+## Static and instance methods
+
+`OneTimeTearDown` may be **static** or an **instance** method.
+
+With [`LifeCycle.SingleInstance`](xref:attribute-fixturelifecycle), an **instance** method runs once on the same shared fixture instance
+that held `OneTimeSetUp`/`SetUp`; use it for instance-field cleanup tied to shared setup.
+
+With [`FixtureLifeCycle(LifeCycle.InstancePerTestCase)`](xref:attribute-fixturelifecycle), `OneTimeTearDown` **must be static**. It runs
+once after all tests despite each case having its **own** instance; instance teardown belongs in [`TearDown`](xref:attribute-teardown)
+per test instead.
+
+Methods may be **async** (`Task` / `Task<T>`); NUnit will wait for completion.
+
+## Test fixture versus SetUp fixture
+
+* **`TestFixture`** — teardown runs **after all tests declared in that fixture** (every parameterized case rooted there)
+finish, failed or passed unless something aborts scheduling earlier.
+* **`SetUpFixture`** — teardown runs once after everything under that [`SetUpFixture`](xref:attribute-setupfixture) slice finishes,
+matching the broader “run once init / run once cleanup” workflow.
+
+Teardown semantics for **abstract or concrete bases** mirror setup: inheritance causes code to participate per derived
+fixture type unless you refactor to **`SetUpFixture`** or **`static`** cleanup patterns when you truly need cross-suite
+lifetime control.
+
+## When teardown runs relative to failures
+
+* **After [`OneTimeSetUp`](xref:attribute-onetimesetup) fails** — once children are skipped, NUnit typically still invokes
+this fixture’s teardown chain so disposal paths can execute. See **[OneTimeSetUp — Failures and exceptions](xref:attribute-onetimesetup#failures-and-exceptions)**.
+
+* **`OneTimeTearDown` failures** — assertion failures or exceptions during teardown are recorded on the **fixture / suite**
+  result as teardown failures. Individual child test outcomes are usually left as they were, but runners still surface the
+  teardown problem.
+
+* **Cancellation / abort** — if execution ends in an **abort** state, teardown may not run (for example parallel stop).
+Normal **stop-on-error** still lets scheduled teardown phases run unless the dispatcher aborts the run.
+
+NUnit schedules fixture teardown **after every direct child of that suite finishes** (runs, failures, or skips scheduled
+from parent setup). Do not treat teardown as a synchronous callback you can trigger from inside an individual `[Test]`
+method body.
+
+## Usage
+
+This is a parameterless attribute that can only be applied to methods.
+
+```csharp
+[OneTimeTearDown]
+```
+
+## Applies To
+
+| Lifecycle Methods | Test Methods | Test Fixtures (Classes) | Assembly |
+| ----------------- | ------------ | ----------------------- | -------- |
+| ✅                | ❌           | ❌                      | ❌       |
 
 ## Example
 
-```csharp
-namespace NUnit.Tests
-{
-  using System;
-  using NUnit.Framework;
-
-  [TestFixture]
-  public class SuccessTests
-  {
-    [OneTimeSetUp]
-    public void Init()
-    { /* ... */ }
-
-    [OneTimeTearDown]
-    public void Cleanup()
-    { /* ... */ }
-
-    [Test]
-    public void Add()
-    { /* ... */ }
-  }
-}
-```
+[!code-csharp[OneTimeTearDownExample](~/snippets/Snippets.NUnit/Attributes/OneTimeTearDownAttributeExamples.cs#OneTimeTearDownExample)]
 
 ## Inheritance
 
-The OneTimeTearDown attribute is inherited from any base class. Therefore, if a base
-class has defined a OneTimeTearDown method, that method will be called
-after any test methods in the derived class.
+The OneTimeTearDown attribute is inherited from any base class. Therefore, if a base class has defined a OneTimeTearDown
+method, that method will be called after any test methods in the derived class.
 
-You may define a OneTimeTearDown method
-in the base class and another in the derived class. NUnit will call base
-class OneTimeTearDown methods after those in the derived classes.
+You may define a OneTimeTearDown method in the base class and another in the derived class. NUnit will call base class
+OneTimeTearDown methods after those in the derived classes.
 
 > [!WARNING]
-> If a base class OneTimeTearDown method is overridden in the derived class, NUnit will not call the base class OneTimeTearDown method; NUnit does not anticipate usage that includes hiding the base method. Note that you may have a different name for each method; as long as both have the `[OneTimeTearDown]` attribute present, each will be called in the correct order.
+> If a base class OneTimeTearDown method is overridden in the derived class, NUnit will not call the base
+> class OneTimeTearDown method; NUnit does not anticipate usage that includes hiding the base method. Note that you may
+> have a different name for each method; as long as both have the `[OneTimeTearDown]` attribute present, each will be
+> called in the correct order.
 
 ## Notes
 
-* Although it is possible to define multiple `OneTimeTearDown` methods in the same class, you should rarely do so. Unlike methods defined in separate classes in the inheritance hierarchy, the order in which they are executed is not guaranteed.
-
-* `OneTimeTearDown` methods may be async if running under .NET 4.0 or higher.
-
-* `OneTimeTearDown` methods run in the context of the [`TestFixture`](xref:testfixtureattribute) or [`SetUpFixture`](xref:setupfixture-attribute), which is separate from the context of any individual test cases. It's important to keep this in mind when using [`TestContext`](xref:testcontext) methods and properties within the method.
-
-* When using  [`FixtureLifeCycle`](xref:fixturelifecycleattribute) with `LifeCycle.InstancePerTestCase`, the `OneTimeTearDown` method must be static and is only called once. This is required so that the teardown method does not access instance fields or properties that are reset for every test.
+1. **`TestContext`** — like `OneTimeSetUp`, `OneTimeTearDown` runs in **fixture / setup-fixture** context, **not**
+   per-test context. Exercise caution using [`TestContext`](xref:testcontext) APIs meant for `[Test]` methods.
+2. Multiple `OneTimeTearDown` methods on the **same** declaration run without a guaranteed mutual order unless you arrange
+   them logically.
+3. Across inheritance, **derived** `OneTimeTearDown` methods run **before** base-class teardowns when both apply (see **Inheritance**).
 
 ## See Also
 
-* [SetUp Attribute](setup.md)
-* [TearDown Attribute](teardown.md)
-* [OneTimeSetUp Attribute](xref:onetimesetup-attribute)
-* [TestFixture Attribute](xref:testfixtureattribute)
-* [SetUpFixture Attribute](xref:setupfixture-attribute)
-* [FixtureLifeCycle Attribute](xref:fixturelifecycleattribute)
+* [SetUp Attribute](xref:attribute-setup)
+* [TearDown Attribute](xref:attribute-teardown)
+* [OneTimeSetUp Attribute](xref:attribute-onetimesetup)
+* [SetUpFixture Attribute](xref:attribute-setupfixture)
+* [FixtureLifeCycle Attribute](xref:attribute-fixturelifecycle)

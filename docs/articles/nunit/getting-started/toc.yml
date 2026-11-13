@@ -1,10 +1,7 @@
 - name: Installation
   href: installation.md
-- name: Upgrading
-  href: upgrading.md
-- name: .NET Core and .NET Standard
-  href: dotnet-core-and-dotnet-standard.md
+- name: Downloading
+  href: downloading.md
 - name: Samples
   href: samples.md
-- name: Breaking Changes
-  topicUid: breakingchanges
+

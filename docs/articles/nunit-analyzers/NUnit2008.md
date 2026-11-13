@@ -2,21 +2,23 @@
 
 ## Incorrect IgnoreCase usage
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit2008
-| Severity | Warning
-| Enabled  | True
-| Category | Assertion
-| Code     | [IgnoreCaseUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/IgnoreCaseUsage/IgnoreCaseUsageAnalyzer.cs)
+| Topic    | Value                                                                                                                                          |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| Id       | NUnit2008                                                                                                                                      |
+| Severity | Warning                                                                                                                                        |
+| Enabled  | True                                                                                                                                           |
+| Category | Assertion                                                                                                                                      |
+| Code     | [IgnoreCaseUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/IgnoreCaseUsage/IgnoreCaseUsageAnalyzer.cs) |
 
 ## Description
 
-The IgnoreCase modifier should only be used for string or char arguments. Using it on another type will not have any effect.
+The IgnoreCase modifier should only be used for string or char arguments. Using it on another type will not have any
+effect.
 
 ## Motivation
 
-To bring developers' attention to a scenario in which their code is actually having no effect and may reveal that their test is not doing what they expect.
+To bring developers' attention to a scenario in which their code is actually having no effect and may reveal that their
+test is not doing what they expect.
 
 ## How to fix violations
 
@@ -33,7 +35,8 @@ public void NUnit2008SampleTest()
 
 ### Explanation
 
-Using IgnoreCase here doesn't make any sense, because the types we're comparing don't have the concept of case. Therefore, it's only suitable to use on textual primitives (e.g. `string` and `char`).
+Using IgnoreCase here doesn't make any sense, because the types we're comparing don't have the concept of case.
+Therefore, it's only suitable to use on textual primitives (e.g. `string` and `char`).
 
 ### Fix
 
@@ -64,7 +67,8 @@ public void NUnit2008SampleTest()
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

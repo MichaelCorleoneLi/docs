@@ -4,18 +4,22 @@ uid: testcontext
 
 # TestContext
 
-Each NUnit test runs in an execution context, which includes information about the environment as well as the test itself. The `TestContext` class allows tests to access certain information about the execution context.
+Each NUnit test runs in an execution context, which includes information about the environment as well as the test
+itself. The `TestContext` class allows tests to access certain information about the execution context.
 
 > [!NOTE]
-> It's important to remember that "test" in NUnit may refer to an individual test cases or a suite such as a `TestFixture`. Within a test method, `SetUp` method or `TearDown` method, the context is that of the individual test case. Within a `OneTimeSetUp` or `OneTimeTearDown` method, the context refers to the fixture as a whole. This can lead to confusion, since most runners display information about fixtures differently from test cases. In fact, some runners may not display information about fixtures at all!
+> It's important to remember that "test" in NUnit may refer to an individual test cases or a suite such as a
+> `TestFixture`. Within a test method, `SetUp` method or `TearDown` method, the context is that of the individual test
+> case. Within a `OneTimeSetUp` or `OneTimeTearDown` method, the context refers to the fixture as a whole. This can lead
+> to confusion, since most runners display information about fixtures differently from test cases. In fact, some runners
+> may not display information about fixtures at all!
 
 ## Static Properties
 
 ### CurrentContext
 
-Gets the context of the currently executing test. This context
-is created separately for each test before it begins execution.
-See below for properties of the current context.
+Gets the context of the currently executing test. This context is created separately for each test before it begins
+execution. See below for properties of the current context.
 
 ### Out
 
@@ -31,7 +35,9 @@ Gets a TextWriter used for  sending normal (non-error) output intended for immed
 
 ### TestParameters
 
-Test parameters may be supplied to a run in various ways, depending on the runner used. For example, the console runner provides a command-line argument and v3.4 of the NUnit 3 VS Adapter will supports specifying them in a .runsettings file. The static TestParameters property returns an object representing those passed-in parameters.
+Test parameters may be supplied to a run in various ways, depending on the runner used. For example, the console runner
+provides a command-line argument and v3.4 of the NUnit 3 VS Adapter will supports specifying them in a .runsettings
+file. The static TestParameters property returns an object representing those passed-in parameters.
 
 The TestParameters object supports the following properties:
 
@@ -43,15 +49,19 @@ The TestParameters object supports the following methods:
 
 * `Exists(string name)` - Returns true if a parameter of that name exists.
 * `Get(string name)`- Returns the same value as the indexer.
-* `Get<T>(string name, T defaultValue)` - Returns the value of the parameter converted from a string to type T or the specified default if the parameter doesn't exist. Throws an exception if conversion fails.
+* `Get<T>(string name, T defaultValue)` - Returns the value of the parameter converted from a string to type T or the
+  specified default if the parameter doesn't exist. Throws an exception if conversion fails.
 
-**Note** that all parameter values are strings. You may convert them to other Types using the generic `Get` method listed above or using your own code. An exception may be thrown if the supplied value cannot be converted correctly.
+**Note** that all parameter values are strings. You may convert them to other Types using the generic `Get` method
+listed above or using your own code. An exception may be thrown if the supplied value cannot be converted correctly.
 
 ## Static Methods
 
 ### Write
 
-Writes text to the current test result.
+Writes text to the current test result, that is the Out writer.  Prefer to use the Out writer directly for better clarity.
+
+Note: *These methods will be deprecated in the future*
 
 ```csharp
 Write(bool value)
@@ -74,7 +84,10 @@ Write(string format, params object[] args)
 
 ### WriteLine
 
-Writes text to the current test result, followed by a newline.
+Writes text to the current test result, followed by a newline, that is the Out writer.  
+Prefer to use the Out writer directly for better clarity.
+
+Note: *These methods will be deprecated in the future*
 
 ```csharp
   WriteLine()
@@ -98,14 +111,17 @@ Writes text to the current test result, followed by a newline.
 
 ### AddFormatter (3.2+)
 
-Adds a formatter for values based on some criterion, such as the Type of the value. The provided formatter will be used when an expected or actual value needs to be displayed as part of a message from a constraint.
+Adds a formatter for values based on some criterion, such as the Type of the value. The provided formatter will be used
+when an expected or actual value needs to be displayed as part of a message from a constraint.
 
 ```csharp
 AddFormatter(ValueFormatter formatter);
 AddFormatter(ValueFormatterFactory formatterFactory);
 ```
 
-Both `ValueFormatter` and `ValueFormatterFactory` are delegates. `ValueFormatter` takes a single object as an argument and returns its string representation. The `AddFormatter` overload that takes a ValueFormatter is intended for use in most cases that arise.
+Both `ValueFormatter` and `ValueFormatterFactory` are delegates. `ValueFormatter` takes a single object as an argument
+and returns its string representation. The `AddFormatter` overload that takes a ValueFormatter is intended for use in
+most cases that arise.
 
 ### AddTestAttachment (3.7+)
 
@@ -115,12 +131,14 @@ Attaches a file, with optional description, to the current test.
 AddTestAttachment(string filePath, string description = null);
 ```
 
-The file will be attached to the test result in the xml report. Test runners, such as the NUnit 3 VS Adapter, may also present the file to the user.
+The file will be attached to the test result in the xml report. Test runners, such as the NUnit 3 VS Adapter, may also
+present the file to the user.
 
 Notes:
 
 1. The file must exist at the time of attachment.
-1. File paths will be resolved as fully rooted paths, relative to `TestContext.CurrentContext.WorkDirectory`, which can be set by the user.
+1. File paths will be resolved as fully rooted paths, relative to `TestContext.CurrentContext.WorkDirectory`, which can
+   be set by the user.
 
 ## Properties of the CurrentContext
 
@@ -128,31 +146,70 @@ Notes:
 
 Gets a representation of the current test, with the following properties:
 
-* **ID** - The unique Id of the test
-* **Name** - The name of the test, whether set by the user or generated automatically
-* **FullName** - The fully qualified name of the test
-* **MethodName** - The name of the method representing the test, if any
-* **Properties** - An `IPropertyBag` of the test properties
+* `ID` - The unique Id of the test
+* `Name` - The name of the test, whether set by the user or generated automatically
+* `Namespace` - The namespace of the test
+* `DisplayName` - The display name of the test
+* `FullName` - The fully qualified name of the test
+* `MethodName` - The name of the method representing the test, if any
+* `Method` - The IMethodInfo of the test method
+* `Type` - The `TypeInfo` of the test
+* `ClassName` - The classname of the test
+* `Arguments` - The arguments as a list of objects, if any.
+* `ExpectedResult` - The expected result, if that is set for the test
+* `Properties` - An `IPropertyBag` of the test properties. Note: The `Get` method ONLY returns the first property
+(with a given key) for the current level.
+
+The following properties are in version 4.2 and above.
+
+* `Parent` - The parent of the given test.
+* `AllPropertyValues` - Returns a list of values (as objects) for a given property across the complete test hierarchy
+* `AllCategories` - Returns a list of all categories (as strings) across the complete test hierarchy
+* `PropertyHierarchy` - A utility method which returns the complete hierarchy of all properties including the name,
+  value and level where they are found.
 
 ### Result
 
 Gets a representation of the test result, with the following properties:
 
-* **Outcome** - A `ResultState` representing the outcome of the test. `ResultState` has the following properties:
-  * **Status** - A `TestStatus` with four possible values:
+* `Outcome` - A `ResultState` representing the outcome of the test. `ResultState` has the following properties:
+  * `Status` - A `TestStatus` with four possible values:
     * Inconclusive
     * Skipped
     * Passed
+    * Warning
     * Failed
-  * **Label** - An optional string value, which can provide sub-categories for each Status. See below for a list of common outcomes supported internally by NUnit.
-  * **Site** - A `FailureSite` value, indicating the stage of execution in which the test generated its result. Possible values are
+  * `Label` - An optional string value, which can provide sub-categories for each Status. See below for a list of
+    common outcomes supported internally by NUnit.
+  * `Site` - A `FailureSite` value, indicating the stage of execution in which the test generated its result. Possible
+    values are
     * Test
     * SetUp
     * TearDown
     * Parent
     * Child
+* `Assertions` - A list of `AssertionResult` values generated up to this point in the test. Please note that **only
+  failed assertions** will be stored in here to limit the size of the result tree and potential impact on performance.
+  Each `AssertionResult` has the following properties:
+  * `Status` - An `AssertionStatus` with five possible values:
+    * Inconclusive
+    * Passed
+    * Warning
+    * Failed
+    * Error
+  * `Message` - A string containing the message produced by the assertion (possibly null).
+  * `StackTrace` - A string containing the stack trace associated with the assertion.
+* `PassCount` - An int representing the number of test cases that passed when running the test and all its children.
+* `FailCount` - An int representing the number of test cases that failed when running the test and all its children.
+* `SkipCount` - An int representing the number of test cases that were skipped when running the test and all its
+  children.
+* `InconclusiveCount` - An int representing the number of test cases that were inconclusive when running the test and
+  all its children.
+* `StackTrace` - A string containing the stack trace associated with an error or failure.
+* `Message` - A string containing the message associated with a test failure or with not running the test.
 
-Although the outcome of the test may be accessed during setup or test execution, it only has a useful value in the teardown stage.
+Although the outcome of the test may be accessed during setup or test execution, it only has a useful value in the
+teardown stage.
 
 ### Common Outcomes
 
@@ -168,17 +225,34 @@ The following is a list of outcomes currently produced by NUnit. Others may be a
 * Explicit: the test was not run because it is marked Explicit. (Status=Skipped, Label=Explicit)
 * Skipped: the test was skipped for some other reason. (Status=Skipped, Label=empty)
 
+### ActiveTests
+
+> [!NOTE]
+> This property was added in NUnit 5.0.
+
+Gets the list of test cases under the current suite that will run, after any filter has been applied. It is available
+in `OneTimeSetUp` and `OneTimeTearDown` methods, and returns `null` everywhere else.
+
+This lets a `SetUpFixture` or a fixture skip expensive setup, such as starting a database, when none of the tests that
+need it will run. It works the same way with every runner, for example `dotnet test`, the NUnit Console or an IDE.
+
+[!code-csharp[ActiveTestsExample](~/snippets/Snippets.NUnit/ActiveTestsExample.cs#ActiveTestsExample)]
+
 ### TestDirectory
 
 Gets the full path of the directory containing the current test assembly.
 
 ### WorkDirectory
 
-Gets the full path of the directory to be used for output from this test run. The XML result file and any redirected output files are located under this directory. This is normally the directory that was current when execution of
-NUnit began but may be changed by use of the **--work** option of nunit-console.
+Gets the full path of the directory to be used for output from this test run. The XML result file and any redirected
+output files are located under this directory. This is normally the directory that was current when execution of NUnit
+began but may be changed by use of the `--work` option of nunit-console.
 
 ### Random
 
-Returns a `Randomizer` object, which may be used in the test code to generate random values. These values are repeatable on reruns of the tests so long as (a) the test assembly is not changed and (b) the same seed is used. The initial random seed used in any test run may be found in the XML result file and may be provided to a subsequent run on the command line.
+Returns a `Randomizer` object, which may be used in the test code to generate random values. These values are repeatable
+on reruns of the tests so long as (a) the test assembly is not changed and (b) the same seed is used. The initial random
+seed used in any test run may be found in the XML result file and may be provided to a subsequent run on the command
+line.
 
 See [Randomizer Methods](Randomizer-Methods.md) for details about each available random data type.

@@ -1,13 +1,13 @@
 - name: Usage Notes
   href: Usage-Notes.md
-- name: Addin Replacement in the Framework
-  href: Addin-Replacement-in-the-Framework.md
 - name: Assembly Isolation
   href: Assembly-Isolation.md
 - name: Configuration Files
   href: Configuration-Files.md
 - name: Counting Tests
   href: Counting-Tests.md
+- name: Debugging Support
+  href: Debugging-Support.md
 - name: Engine Parallel Test Execution
   href: Engine-Parallel-Test-Execution.md
 - name: Framework Parallel Test Execution
@@ -26,7 +26,7 @@
   href: Test-Filters.md
 - name: Test Result XML Format
   href: Test-Result-XML-Format.md
-- name: Visual Studio Support
-  href: Visual-Studio-Support.md
+- name: Trace and Debug Output
+  href: Trace-and-Debug-Output.md
 - name: XML Formats
   href: XML-Formats.md

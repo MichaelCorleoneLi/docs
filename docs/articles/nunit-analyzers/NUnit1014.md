@@ -2,13 +2,13 @@
 
 ## The async test method must have a Task\<T> return type when a result is expected
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit1014
-| Severity | Error
-| Enabled  | True
-| Category | Structure
-| Code     | [TestMethodUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/TestMethodUsage/TestMethodUsageAnalyzer.cs)
+| Topic    | Value                                                                                                                                          |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| Id       | NUnit1014                                                                                                                                      |
+| Severity | Error                                                                                                                                          |
+| Enabled  | True                                                                                                                                           |
+| Category | Structure                                                                                                                                      |
+| Code     | [TestMethodUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/TestMethodUsage/TestMethodUsageAnalyzer.cs) |
 
 ## Description
 
@@ -32,7 +32,8 @@ public async Task NUnit1014SampleTest(int numberValue)
 
 ### Explanation
 
-The NUnit `ExpectedResult` syntax is used, so this method needs to return a type that matches the type of expected result you're looking for.
+The NUnit `ExpectedResult` syntax is used, so this method needs to return a type that matches the type of expected
+result you're looking for.
 
 ### Fix
 
@@ -61,7 +62,8 @@ public async Task<bool> NUnit1014SampleTest(int numberValue)
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

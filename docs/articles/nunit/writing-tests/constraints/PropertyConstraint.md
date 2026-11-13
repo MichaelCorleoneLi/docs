@@ -1,37 +1,41 @@
+---
+uid: constraint-property
+---
+
 # Property Constraint
 
-`PropertyConstraint` tests for the existence of a named property on an object and then
-applies a constraint test to the property value.
+`PropertyConstraint` tests the value of a named property on an object against a further constraint.
 
-## Constructor
-
-```csharp
-PropertyConstraint(string name, IConstraint baseConstraint)
-```
-
-## Syntax
+## Usage
 
 ```csharp
-Has.Property(string name)... // followed by further constraint syntax
+Has.Property(string propertyName).<constraint>
+Has.Length.<constraint>
+Has.Count.<constraint>
+Has.Message.<constraint>
+Has.InnerException.<constraint>
 ```
 
-## Examples of Use
+## Examples
+
+[!code-csharp[PropertyConstraintExamples](~/snippets/Snippets.NUnit/Constraints/SpecialConstraintSnippets.cs#PropertyConstraintExamples)]
+
+### Built-in Property Shortcuts
 
 ```csharp
-Assert.That(someObject, Has.Property("Version").EqualTo("2.0"));
-Assert.That(collection, Has.Property("Count").GreaterThan(10));
-Assert.That(collection, Has.Count.GreaterThan(10);
+Has.Length       // Equivalent to Has.Property("Length")
+Has.Count        // Equivalent to Has.Property("Count")
+Has.Message      // Equivalent to Has.Property("Message")
+Has.InnerException // Equivalent to Has.Property("InnerException")
 ```
 
-As shown in the example, certain common properties are known to NUnit and may be tested using a shorter form. The following properties are supported:
+## Notes
 
-```csharp
-Has.Length...
-Has.Count...
-Has.Message...
-Has.InnerException...
-```
+1. If no constraint follows `Has.Property()`, it becomes a [PropertyExistsConstraint](PropertyExistsConstraint.md).
+2. The property must be public and readable.
+3. If the property doesn't exist, the constraint fails with a descriptive message.
 
-## See also
+## See Also
 
-* [PropertyExistsConstraint](PropertyExistsConstraint.md)
+* [PropertyExists Constraint](PropertyExistsConstraint.md) - Just test for property existence
+* [ExactCount Constraint](ExactCountConstraint.md) - Count items matching a constraint

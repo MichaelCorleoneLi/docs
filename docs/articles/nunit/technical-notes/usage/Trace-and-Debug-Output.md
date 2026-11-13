@@ -1,0 +1,77 @@
+---
+uid: traceanddebugoutput
+---
+
+# How to enable Trace and Debug output
+
+Trace and Debug output is by default not sent to the console output, or anywhere else.  If you want to have this output,
+you must add a `TraceListener`.
+
+## Activating the `System.Diagnostics.ConsoleTraceListener` in your code
+
+This is easy to do, and you can do it per assembly, per namespace or per test.  All it takes is to add the necessary
+initialization of the `ConsoleTraceListener`.
+
+To add it to a namespace, place the following class inside that namespace, and it will apply to all tests inside that
+namespace and below.  The code shown adds the output to console output.
+
+[!code-csharp[ConsoleTraceListenerSetUpFixture](~/snippets/Snippets.NUnit/TraceAndDebugOutputExamples.cs#ConsoleTraceListenerSetUpFixture)]
+
+If you place the code above outside of any namespace it will apply to the whole assembly.
+
+If you'd like to only apply to a given test fixture/class, you can add the `StartTest and EndTest` methods to the given
+test fixture/class.
+
+If you like you can change that to another kind of listener.
+
+## Example outputs
+
+Given the following verbose test:
+
+[!code-csharp[VerboseTest](~/snippets/Snippets.NUnit/TraceAndDebugOutputExamples.cs#VerboseTest)]
+
+With a `TraceListener`, the output in Visual Studio Test Explorer is:
+
+![Trace Debug output showing the lines outputted by the TraceListener](../../../../images/TraceDebug1.png)
+
+Without the `TraceListener`, the blocks in red will not be present.
+
+Running `dotnet test -v n`, the output will be:
+
+![DotNet Trace Debug output showing the lines outputted by the TraceListener](../../../../images/TraceDebug2.png)
+
+## Activating the `NUnit.Framework.Diagnostics.ProgressTraceListener` in your code
+
+Opposed to the `ConsoleTraceListener`, the `ProgressTraceListener` will show Trace and Debug output immediately.
+
+Activating is equally easy to do, and you can also do it per assembly, per namespace or per test.  All it takes is to
+add the necessary initialization of the `ProgressTraceListener` and make sure it is only added once.  The final
+`Trace.Flush()` is not needed with the `ProgressTraceListener`.
+
+To add it to a namespace, place the following class inside that namespace, and it will apply to all tests inside that
+namespace and below.  The code shown adds the output to progress output.
+
+[!code-csharp[ProgressTraceListenerSetUpFixture](~/snippets/Snippets.NUnit/TraceAndDebugOutputExamples.cs#ProgressTraceListenerSetUpFixture)]
+
+If you place the code above outside of any namespace it will apply to the whole assembly.
+
+If you'd like to only apply to a given test fixture/class, you can add the `StartTest and EndTest` methods to the given
+test fixture/class.
+
+If you like you can change that to another kind of listener.
+
+For how the test adapter shows this output in Visual Studio and `dotnet test`, see
+[Trace and Debug Output in the adapter](../../../vs-test-adapter/Trace-and-Debug.md).
+
+## Discussion and source
+
+This issue has been discussed at [Issue 718](https://github.com/nunit/nunit3-vs-adapter/issues/718) and
+[Issue 301](https://github.com/nunit/nunit3-vs-adapter/issues/301).  Use of `TraceListener` suggested by
+[Frans Bouma](https://github.com/FransBouma).  This issue has also been discussed at
+[NUnit Issue 4686](https://github.com/nunit/nunit/issues/4686) based on
+[TestCentric GUI Issue 1043](https://github.com/TestCentric/testcentric-gui/issues/1043).  `ProgressTraceListener`
+suggested by [Charlie Poole](https://github.com/CharliePoole).
+
+The repro code for the issue can be found
+[on this vs-adapter issue](https://github.com/nunit/nunit3-vs-adapter.issues/tree/master/Issue718) and
+[on this TestCentric GUI issue](https://github.com/TestCentric/testcentric-gui/issues/1043).

@@ -2,13 +2,13 @@
 
 ## The ValueSource argument does not specify an existing member
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit1025
-| Severity | Error
-| Enabled  | True
-| Category | Structure
-| Code     | [ValueSourceUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/ValueSourceUsage/ValueSourceUsageAnalyzer.cs)
+| Topic    | Value                                                                                                                                             |
+| :------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Id       | NUnit1025                                                                                                                                         |
+| Severity | Error                                                                                                                                             |
+| Enabled  | True                                                                                                                                              |
+| Category | Structure                                                                                                                                         |
+| Code     | [ValueSourceUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/ValueSourceUsage/ValueSourceUsageAnalyzer.cs) |
 
 ## Description
 
@@ -37,7 +37,8 @@ public static object[] MyTestSource()
 
 ### Explanation
 
-In the example above, the test case source is named `MyIncorrectTestCaseSource`, but the test case source is actually named `MyTestSource`. Because the names don't match, this will be an error.
+In the example above, the test case source is named `MyIncorrectTestCaseSource`, but the test case source is actually
+named `MyTestSource`. Because the names don't match, this will be an error.
 
 ### Fix
 
@@ -76,7 +77,8 @@ public static object[] MyTestSource()
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

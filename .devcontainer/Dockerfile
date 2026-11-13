@@ -1,103 +1,41 @@
-FROM nunitdocs/docfx-action:v1.4.0
+FROM ghcr.io/nunit/docfx-action:v5.0.0
 EXPOSE 8080
+ARG NODE_MAJOR=20
 
-### Installing Node into the container -- from https://github.com/nodejs/docker-node/tree/main/16/buster-slim
+### Installing Node LTS into the container
+RUN apt-get update
+RUN apt-get install -y ca-certificates curl gnupg
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 
-RUN groupadd --gid 1000 node \
-  && useradd --uid 1000 --gid node --shell /bin/bash --create-home node
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+RUN apt-get update
+RUN apt-get install nodejs unzip dos2unix -y
 
-ENV NODE_VERSION 16.7.0
-
-RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
-  && case "${dpkgArch##*-}" in \
-  amd64) ARCH='x64';; \
-  ppc64el) ARCH='ppc64le';; \
-  s390x) ARCH='s390x';; \
-  arm64) ARCH='arm64';; \
-  armhf) ARCH='armv7l';; \
-  i386) ARCH='x86';; \
-  *) echo "unsupported architecture"; exit 1 ;; \
-  esac \
-  && set -ex \
-  # libatomic1 for arm
-  && apt-get update && apt-get install -y ca-certificates curl wget gnupg dirmngr xz-utils libatomic1 --no-install-recommends \
-  && rm -rf /var/lib/apt/lists/* \
-  && for key in \
-  4ED778F539E3634C779C87C6D7062848A1AB005C \
-  94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-  74F12602B6F1C4E913FAA37AD3A89613643B6201 \
-  71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-  8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600 \
-  C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-  C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C \
-  DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-  A48C2BEE680E841632CD4E44F07496B3EB3C1762 \
-  108F52B48DB57BB0CC439B2997B01419BD92F80A \
-  B9E2F5981AA6E0CD28160D9FF13993A75599653C \
-  ; do \
-  gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
-  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
-  done \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-$ARCH.tar.xz" \
-  && curl -fsSLO --compressed "https://nodejs.org/dist/v$NODE_VERSION/SHASUMS256.txt.asc" \
-  && gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc \
-  && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
-  && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
-  && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-  && apt-mark auto '.*' > /dev/null \
-  && find /usr/local -type f -executable -exec ldd '{}' ';' \
-  | awk '/=>/ { print $(NF-1) }' \
-  | sort -u \
-  | xargs -r dpkg-query --search \
-  | cut -d: -f1 \
-  | sort -u \
-  | xargs -r apt-mark manual \
-  && ln -s /usr/local/bin/node /usr/local/bin/nodejs \
-  # smoke tests
-  && node --version \
-  && npm --version
-
-ENV YARN_VERSION 1.22.5
-
-RUN set -ex \
-  && savedAptMark="$(apt-mark showmanual)" \
-  && apt-get update && apt-get install -y ca-certificates curl wget gnupg dirmngr --no-install-recommends \
-  && rm -rf /var/lib/apt/lists/* \
-  && for key in \
-  6A010C5166006599AA17F08146C2130DFD2497F5 \
-  ; do \
-  gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys "$key" || \
-  gpg --batch --keyserver keyserver.ubuntu.com --recv-keys "$key" ; \
-  done \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz" \
-  && curl -fsSLO --compressed "https://yarnpkg.com/downloads/$YARN_VERSION/yarn-v$YARN_VERSION.tar.gz.asc" \
-  && gpg --batch --verify yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-  && mkdir -p /opt \
-  && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/ \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarn /usr/local/bin/yarn \
-  && ln -s /opt/yarn-v$YARN_VERSION/bin/yarnpkg /usr/local/bin/yarnpkg \
-  && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
-  && apt-mark auto '.*' > /dev/null \
-  && { [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark > /dev/null; } \
-  && find /usr/local -type f -executable -exec ldd '{}' ';' \
-  | awk '/=>/ { print $(NF-1) }' \
-  | sort -u \
-  | xargs -r dpkg-query --search \
-  | cut -d: -f1 \
-  | sort -u \
-  | xargs -r apt-mark manual \
-  # smoke test
-  && yarn --version
-
-### Installing the relevant npm packages
-
+### Installing Node Packages
+RUN npm install -g yarn
 RUN npm install -g npm
 RUN npm install -g cspell
-RUN npm install -g markdownlint-cli
+RUN npm install -g markdownlint-cli2
+
+RUN node -v
+RUN npm -v
+RUN yarn -v
+
+# This script gets the api-docs from the latest NUnit release
+COPY get-nunit-apidocs.sh .
+RUN dos2unix ./get-nunit-apidocs.sh
+RUN chmod +x get-nunit-apidocs.sh
 
 ### Add the aliases
+# We get the first workspace, because there should only be one
+# This is so that when someone updates their devcontainer name, it doesn't get screwed up
+RUN echo 'first_workspace=\"$(cd /workspaces && ls | head -1)\"; alias spellcheck="cspell --config /workspaces/$first_workspace/cSpell.json \"/workspaces/$first_workspace/docs/**/*.md\" --no-progress"' >> ~/.bashrc
+RUN echo 'first_workspace=\"$(cd /workspaces && ls | head -1)\"; alias lint="markdownlint-cli2 --config /workspaces/$first_workspace/.github/linters/.markdownlint.yml \"/workspaces/$first_workspace/docs/**/*.md\""' >> ~/.bashrc
+RUN echo 'first_workspace=\"$(cd /workspaces && ls | head -1)\"; alias build="docfx /workspaces/$first_workspace/docs/docfx.json"' >> ~/.bashrc
+RUN echo 'first_workspace=\"$(cd /workspaces && ls | head -1)\"; alias serve="docfx /workspaces/$first_workspace/docs/docfx.json --serve"' >> ~/.bashrc
+RUN echo 'first_workspace=\"$(cd /workspaces && ls | head -1)\"; alias snippets="dotnet test /workspaces/$first_workspace/docs/snippets/Snippets.sln"' >> ~/.bashrc
 
-RUN echo 'alias spellcheck="cspell --config /workspaces/docs/cSpell.json \"/workspaces/docs/docs/**/*.md\""' >> ~/.bashrc
-RUN echo 'alias lint="markdownlint -c /workspaces/docs/.github/linters/.markdown-lint.yml /workspaces/docs/docs/**/*.md"' >> ~/.bashrc
-RUN echo 'alias build="cd /workspaces/docs/docs && docfx build"' >> ~/.bashrc
-RUN echo 'alias serve="build && docfx serve _site -n \"*\""' >> ~/.bashrc
+# We load the latest NUnit apidocs at start in case they're needed later
+RUN echo 'alias apidocs="bash /get-nunit-apidocs.sh"' >> ~/.bashrc
+RUN echo 'apidocs' >> ~/.bashrc

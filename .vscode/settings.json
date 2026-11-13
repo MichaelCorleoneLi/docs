@@ -15,5 +15,12 @@
     "cSpell.enabled": true,
     "cSpell.enableFiletypes": [
         "aspnetcorerazor"
-    ]
+    ],
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wrappingIndent": "same",
+    "editor.wordWrapColumn": 120,
+    "editor.rulers": [120],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.markdownlint": "always"
+    }
 }

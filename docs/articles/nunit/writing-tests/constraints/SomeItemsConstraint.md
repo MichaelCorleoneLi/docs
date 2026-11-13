@@ -1,24 +1,52 @@
+---
+uid: constraint-someitems
+---
+
 # SomeItems Constraint
 
-`SomeItemsConstraint` applies a constraint to each item in an `IEnumerable`, succeeding if at least one of them succeeds. An exception is thrown if the actual value passed does not implement `IEnumerable`.
+`SomeItemsConstraint` applies a constraint to each item in an `IEnumerable`, succeeding if at least one item satisfies
+the constraint. An exception is thrown if the actual value does not implement `IEnumerable`.
 
-## Constructor
-
-```csharp
-SomeItemsConstraint(Constraint itemConstraint)
-```
-
-## Syntax
+## Usage
 
 ```csharp
-Has.Some...
+Has.Some.<constraint>
+Has.Member(object expected)
+Contains.Item(object expected)
+Does.Contain(object expected)
 ```
 
-## Examples of Use
+## Modifiers
 
 ```csharp
-int[] iarray = new int[] { 1, 2, 3 };
-string[] sarray = new string[] { "a", "b", "c" };
-Assert.That(iarray, Has.Some.GreaterThan(2));
-Assert.That(sarray, Has.Some.Length(1));
+.IgnoreCase
+.IgnoreWhiteSpace              // NUnit 4.2+
+.Using(IComparer comparer)
+.Using(IEqualityComparer comparer)
+.Using<T>(IComparer<T> comparer)
+.Using<T>(IEqualityComparer<T> comparer)
+.Using<T>(Comparison<T> comparer)
+.Using<T>(Func<T, T, bool> comparer)
+.UsingPropertiesComparer()     // NUnit 4.1+
 ```
+
+## Examples
+
+[!code-csharp[SomeItemsConstraintExamples](~/snippets/Snippets.NUnit/Constraints/CollectionConstraintSnippets.cs#SomeItemsConstraintExamples)]
+
+### Contains examples
+
+[!code-csharp[Collection Contains Examples](~/snippets/Snippets.NUnit/ConstraintExamples.cs#CollectionContainsExamples)]
+
+## Notes
+
+1. `Has.Member()`, `Contains.Item()`, and `Does.Contain()` are all equivalent to `Has.Some.EqualTo()`.
+2. The constraint succeeds as soon as the first matching item is found.
+3. An empty collection always fails this constraint.
+4. For testing substring containment in strings, see [SubstringConstraint](SubstringConstraint.md).
+
+## See Also
+
+* [AllItems Constraint](AllItemsConstraint.md) - All items must match
+* [NoItem Constraint](NoItemConstraint.md) - No items match
+* [Contains Constraint](ContainsConstraint.md) - Polymorphic containment testing

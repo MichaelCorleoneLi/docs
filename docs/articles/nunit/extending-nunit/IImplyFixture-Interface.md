@@ -8,9 +8,11 @@ public interface IImplyFixture
 }
 ```
 
-If a class contains any method with an attribute that implements this interface, that class is treated as an NUnit TestFixture without any `TestFixture` attribute being specified. The following NUnit attributes currently implement this interface:
+If a class contains any method with an attribute that implements this interface, that class is treated as an NUnit
+TestFixture without any `TestFixture` attribute being specified. The following NUnit attributes currently implement this
+interface:
 
-* `TestAttribute`
-* `TestCaseAttribute`
-* `TestCaseSourceAttribute`
-* `TheoryAttribute`
+* [`TestAttribute`](xref:attribute-test)
+* [`TestCaseAttribute`](xref:attribute-testcase)
+* [`TestCaseSourceAttribute`](xref:attribute-testcasesource)
+* [`TheoryAttribute`](xref:attribute-theory)

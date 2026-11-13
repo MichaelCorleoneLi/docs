@@ -2,13 +2,13 @@
 
 ## The specified source is not static
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit1022
-| Severity | Error
-| Enabled  | True
-| Category | Structure
-| Code     | [ValueSourceUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/ValueSourceUsage/ValueSourceUsageAnalyzer.cs)
+| Topic    | Value                                                                                                                                             |
+| :------- | :------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Id       | NUnit1022                                                                                                                                         |
+| Severity | Error                                                                                                                                             |
+| Enabled  | True                                                                                                                                              |
+| Category | Structure                                                                                                                                         |
+| Code     | [ValueSourceUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/ValueSourceUsage/ValueSourceUsageAnalyzer.cs) |
 
 ## Description
 
@@ -28,7 +28,7 @@ public class MyTestClass
     [Test]
     public void DivideTest([ValueSource(nameof(Numbers))] int n)
     {
-        Assert.AreEqual(n, Is.GreaterThanOrEqualTo(0));
+        ClassicAssert.AreEqual(n, Is.GreaterThanOrEqualTo(0));
     }
 
     object[] Numbers => new int[] { 1, 2, 3 };
@@ -39,7 +39,7 @@ public class MyTestClass
 
 In the sample above, `Numbers` is not a `static` property.
 
-However, sources specified by `ValueSource` [must be `static`](xref:valuesource).
+However, sources specified by `ValueSource` [must be `static`](xref:attribute-valuesource).
 
 ### Fix
 
@@ -51,7 +51,7 @@ public class MyTestClass
     [Test]
     public void DivideTest([ValueSource(nameof(Numbers))] int n)
     {
-        Assert.AreEqual(n, Is.GreaterThanOrEqualTo(0));
+        ClassicAssert.AreEqual(n, Is.GreaterThanOrEqualTo(0));
     }
 
     static object[] Numbers => new int[] { 1, 2, 3 };
@@ -63,7 +63,8 @@ public class MyTestClass
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

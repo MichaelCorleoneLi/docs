@@ -1,57 +1,61 @@
+---
+uid: attribute-platform
+---
+
 # Platform
 
-The Platform attribute is used to specify platforms for which a test or fixture
-should be run. Platforms are specified using case-insensitive string values
-and may be either included or excluded from the run by use of the Include or
-Exclude properties respectively. Platforms to be included may alternatively
-be specified as an argument to the PlatformAttribute constructor. In either
-case, multiple comma-separated values may be specified.
+`PlatformAttribute` specifies platforms on which a test, fixture, or assembly should run. Platform names are
+case-insensitive. You can require platforms in any of these ways:
 
-If a test or fixture with the Platform attribute does not satisfy the specified
-platform requirements it is skipped. The test does not affect the outcome of
-the run at all: it is not considered as ignored and is not even counted in
-the total number of tests. _[Ed.: Check this.]_ In the gui, the tree node for the test remains
-gray and the status bar color is not affected.
+* Pass a comma-separated list to the constructor (treated as **included** platforms).
+* Set the `Include` property to a comma-separated list.
+* Set the `Exclude` property to a comma-separated list.
 
-## Test Fixture Syntax
+You can combine `Include` and `Exclude` where that makes sense for your scenario.
 
-```csharp
-namespace NUnit.Tests
-{
-  using System;
-  using NUnit.Framework;
+If the current environment does **not** satisfy the attribute, NUnit marks the test as **skipped** (`RunState.Skipped`)
+with a skip reason—it does **not** mark it as ignored, and it does not fail the run. Skipped tests are omitted from the
+normal pass/fail counts in the same way as other skipped work. How your test runner displays skipped tests (for example
+in a tree view or status bar) depends on that runner.
 
-  [TestFixture]
-  [Platform("NET-2.0")]
-  public class DotNetTwoTests
-  {
-    // ...
-  }
-}
-```
+Invalid or unrecognized platform names can make a test **not runnable** instead of skipped; see your runner output for
+the reason.
 
-## Test Syntax
+## Constructors
 
 ```csharp
-namespace NUnit.Tests
-{
-  using System;
-  using NUnit.Framework;
-
-  [TestFixture]
-  public class SuccessTests
-  {
-    [Test]
-    [Platform(Exclude="Win98,WinME")]
-    public void SomeTest()
-    { /* ... */ }
-}
+PlatformAttribute()
+PlatformAttribute(string platforms)
+PlatformAttribute(string[] includes)
 ```
+
+| Parameter   | Type       | Description                               |
+| ----------- | ---------- | ----------------------------------------- |
+| `platforms` | `string`   | Comma-delimited platform list to include. |
+| `includes`  | `string[]` | Platform identifiers to include.          |
+
+## Properties
+
+| Property   | Type       | Description                                 | Default |
+| ---------- | ---------- | ------------------------------------------- | ------- |
+| `Include`  | `string`   | Comma-delimited list of included platforms. | `null`  |
+| `Exclude`  | `string`   | Comma-delimited list of excluded platforms. | `null`  |
+| `Includes` | `string[]` | Array of included platforms.                | `null`  |
+| `Excludes` | `string[]` | Array of excluded platforms.                | `null`  |
+
+## Applies To
+
+| Test Methods | Test Fixtures (Classes) | Assembly |
+| ------------ | ----------------------- | -------- |
+| ✅           | ✅                      | ✅       |
+
+## Examples
+
+[!code-csharp[PlatformAttributeExamples](~/snippets/Snippets.NUnit/Attributes/PlatformAttributeExamples.cs#PlatformAttributeExamples)]
 
 ## Platform Specifiers
 
-The following values are recognized as platform specifiers.
-They may be expressed in upper, lower or mixed case.
+The following values are recognized as platform specifiers. They may be expressed in upper, lower or mixed case. A list of supported identifiers can also be referenced from the named constants in the [`PlatformNames`](/api/NUnit.Framework.PlatformNames.html) class. _(NUnit 4.6+)_.
 
 ### Operating System
 
@@ -79,13 +83,12 @@ They may be expressed in upper, lower or mixed case.
 * Windows8
 * Windows8.1
 * Windows10
+* Windows11
 * WindowsServer10
 * Unix
 * Linux
 * MacOsX
 * XBox
-
-A list of supported platform identifiers can also be obtained from the constant string ``PlatformHelper.OSPlatforms`` of the NUnit assembly you use. Note that this is for informational purposes only, because the ``PlatformHelper`` is considered an internal type and shall not be used in production.
 
 ### Architecture
 
@@ -99,27 +102,57 @@ A list of supported platform identifiers can also be obtained from the constant 
 ### Runtime
 
 * Net
-* Net-1.0
-* Net-1.1
-* Net-2.0
-* Net-3.0 (1)
-* Net-3.5 (2)
-* Net-4.0
-* Net-4.5 (3)
-* NetCF
+* NETCore
+* DotNET
+* DotNETCore
+* NETFramework _(NUnit 5+)_
+* DotNETFramework _(NUnit 5+)_
+
+> [!IMPORTANT]
+> **Breaking change in NUnit 5:** The meaning of `NET` and `DotNET` has changed to better align with
+> Microsoft's terminology. These identifiers previously targeted .NET Framework and now
+> target modern .NET (.NET 5+, .NET Core). For more information please see the [**Breaking Changes**](#breaking-changes-in-nunit-5) section below.
+
+#### Other Runtimes
+
 * SSCLI
 * Rotor
 * Mono
-* Mono-1.0
-* Mono-2.0
-* Mono-3.0 (4)
-* Mono-3.5 (5)
-* Mono-4.0
+* MonoTouch
 
-## Notes
+#### Runtime Version Specifiers
 
-1. Includes Net-2.0
-2. Includes Net-2.0 and Net-3.0
-3. Includes Net-4.0
-4. Includes Mono-2.0
-5. Includes Mono-2.0 and Mono-3.0
+> [!NOTE]
+> Version specifiers (for example, `Net-5.0`) are **not** supported for modern .NET identifiers.
+
+A runtime version number can be appended using a dash, for example `NETFramework-4.0`, `NETFramework-4.5`, or `Mono-3.0`. These relate to the underlying Common Language Runtime (CLR) version and are inclusive of lower runtime versions which target the same CLR.
+
+For example:
+
+`NETFramework-4.5` will include `NETFramework-4.0` as both run on version 4 of the CLR. Similarly, `Mono-3.5` will include `Mono-2.0` and `Mono-3.0` as all run on version 2 of the MonoCLR.
+
+## Breaking Changes in NUnit 5
+
+The meaning of `NET` and `DotNET` has changed to better align with Microsoft's current .NET terminology. These identifiers previously targeted .NET Framework and now
+target modern .NET (.NET 5+, .NET Core).
+
+| Identifier        | NUnit 4        | NUnit 5                   |
+| ----------------- | -------------- | ------------------------- |
+| `NET`             | .NET Framework | Modern .NET               |
+| `NETFramework`    | Not supported  | .NET Framework            |
+| `NETCore`         | Modern .NET    | Modern .NET _(unchanged)_ |
+| `DotNET`          | .NET Framework | Modern .NET               |
+| `DotNETCore`      | Modern .NET    | Modern .NET _(unchanged)_ |
+| `DotNETFramework` | Not supported  | .NET Framework            |
+
+If you were using `[Platform(PlatformNames.NET)]` or `[Platform(PlatformNames.DotNET)]` to target .NET Framework,
+update those usages to `[Platform(PlatformNames.NETFramework)]` or `[Platform(PlatformNames.DotNETFramework)]`.
+
+Additionally, version-specific .NET targeting using `Net-X.X` (for example, `Net-4.0`, `Net-4.5`)
+is no longer supported. Use `NETFramework-X.X` instead (for example, `NETFramework-4.0`,
+`NETFramework-4.5`).
+
+## `[SupportedOSPlatformAttribute]` and `[UnsupportedOSPlatformAttribute]` support
+
+The [`[SupportedOSPlatform]` and `[UnsupportedOSPlatform]`](https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/quality-rules/ca1416) attributes are also supported,
+however they are only supported on a subset of dotnet versions compared to `[Platform]`. See the docs from Microsoft for more information about `[SupportedOSPlatform]` and `[UnsupportedOSPlatform]`.

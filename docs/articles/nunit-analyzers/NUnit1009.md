@@ -2,13 +2,13 @@
 
 ## One may not specify ParallelScope.Children on a non-parameterized test method
 
-| Topic    | Value
-| :--      | :--
-| Id       | NUnit1009
-| Severity | Error
-| Enabled  | True
-| Category | Structure
-| Code     | [ParallelizableUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/0.6.0/src/nunit.analyzers/ParallelizableUsage/ParallelizableUsageAnalyzer.cs)
+| Topic    | Value                                                                                                                                                      |
+| :------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Id       | NUnit1009                                                                                                                                                  |
+| Severity | Error                                                                                                                                                      |
+| Enabled  | True                                                                                                                                                       |
+| Category | Structure                                                                                                                                                  |
+| Code     | [ParallelizableUsageAnalyzer](https://github.com/nunit/nunit.analyzers/blob/4.12.0/src/nunit.analyzers/ParallelizableUsage/ParallelizableUsageAnalyzer.cs) |
 
 ## Description
 
@@ -35,7 +35,8 @@ public void NUnit1009SampleTest()
 
 In the sample above, the `Parallelizable` attribute is used with `ParallelScope.Children`.
 
-However, in a non-parameterized test, such as a `[Test]` and not a `[TestCase]`, there will be no children generated, and thus this type of parallelization does not make sense.
+However, in a non-parameterized test, such as a `[Test]` and not a `[TestCase]`, there will be no children generated,
+and thus this type of parallelization does not make sense.
 
 ### Fix
 
@@ -66,7 +67,8 @@ public void NUnit1009SampleTest(int numberValue)
 
 ### Via ruleset file
 
-Configure the severity per project, for more info see [MSDN](https://msdn.microsoft.com/en-us/library/dd264949.aspx).
+Configure the severity per project, for more info see
+[MSDN](https://learn.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules?view=vs-2022).
 
 ### Via .editorconfig file
 

@@ -1,7 +1,17 @@
+---
+uid: classic-string-assert
+---
+
 # StringAssert
 
 The StringAssert class provides a number of methods that are useful
 when examining string values.
+
+`StringAssert` is in the `NUnit.Framework` namespace, so `using NUnit.Framework;` is enough. It ships in
+`nunit.framework.legacy.dll`, which is part of the NUnit package.
+
+> [!NOTE]
+> In NUnit 4, `StringAssert` was in the `NUnit.Framework.Legacy` namespace and needed `using NUnit.Framework.Legacy;`.
 
 ```csharp
 StringAssert.Contains(string expected, string actual);
@@ -16,8 +26,8 @@ StringAssert.StartsWith(string expected, string actual);
 StringAssert.StartsWith(string expected, string actual,
                         string message, params object[] args);
 
-StringAssert.DoesNotStartsWith(string expected, string actual);
-StringAssert.DoesNotStartsWith(string expected, string actual,
+StringAssert.DoesNotStartWith(string expected, string actual);
+StringAssert.DoesNotStartWith(string expected, string actual,
                                string message, params object[] args);
 
 StringAssert.EndsWith(string expected, string actual);
@@ -43,6 +53,23 @@ StringAssert.IsMatch(string regexPattern, string actual,
 StringAssert.DoesNotMatch(string regexPattern, string actual);
 StringAssert.DoesNotMatch(string regexPattern, string actual,
                           string message, params object[] args);
+
+// Functions below are available in NUnit 4.5 and later
+StringAssert.IsNullOrEmpty(string? actual);
+StringAssert.IsNullOrEmpty(string? actual,
+                           string message, params object[] args);
+
+StringAssert.IsNotNullNorEmpty(string? actual);
+StringAssert.IsNotNullNorEmpty(string? actual,
+                               string message, params object[] args);
+
+StringAssert.IsNullOrWhiteSpace(string? actual);
+StringAssert.IsNullOrWhiteSpace(string? actual,
+                                string message, params object[] args);
+
+StringAssert.IsNotNullNorWhiteSpace(string? actual);
+StringAssert.IsNotNullNorWhiteSpace(string? actual,
+                                    string message, params object[] args);
 ```
 
 ## See Also
